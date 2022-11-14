@@ -10,3 +10,7 @@ ylst, clst, ailst, Cllst, Cdilst, Cmlst = get_lst(filename)
 #interplotion function
 get_cl = sp.interpolate.interp1d(ylst, Cllst, kind="cubic", fill_value="extrapolate")
 
+get_cdi = sp.interpolate.interp1d(ylst, Cdilst, kind="cubic", fill_value="extrapolate")
+
+get_cm = sp.interpolate.interp1d(ylst, Cmlst, kind="cubic", fill_value="extrapolate")
+
