@@ -31,7 +31,7 @@ def get_cmspan(y):
 def get_cdispan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)
 
-estimate_cl = sp.integrate.quad(get_Lspan,0,12)
+estimate_cl, error_cl = sp.integrate.quad(get_Lspan,0,12)
 print(estimate_cl)
 
 # y = np.linspace(0.5,12,100)
