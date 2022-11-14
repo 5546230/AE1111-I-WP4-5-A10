@@ -10,8 +10,8 @@ def get_lst(filename: str) -> np.ndarray:
         skip_header= 21,
         skip_footer=2523
     )
-    #ouhyg
-    print(lst)
+    
+    lst=lst.T
     #store all paramters in it's own lists
     ylst = lst[0]
     clst = lst[1]
@@ -23,4 +23,3 @@ def get_lst(filename: str) -> np.ndarray:
     #return the lists
     return ylst, clst, ailst, Cllst, Cdilst, Cmlst
 
-ylst, clst, ailst, Cllst, Cdilst, Cmlst = get_lst("Data\MainWing_a=0.00_v=10.00ms.csv")
