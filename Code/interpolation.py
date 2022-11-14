@@ -26,7 +26,7 @@ get_cm = sp.interpolate.interp1d(ylst, Cmlst, kind="cubic", fill_value="extrapol
 
 get_Lspan = sp.interpolate.interp1d(ylst, Lspanlst, kind="cubic", fill_value="extrapolate")
 
-estimate_cl = sp.integrate.quad(Lspanlst,0,12)
+estimate_cl, error_cl = sp.integrate.quad(Lspanlst,0,12)
 print(estimate_cl)
 
 
