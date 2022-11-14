@@ -10,7 +10,7 @@ def get_lst(filename: str) -> np.ndarray:
         skip_header= 21,
         skip_footer=2523
     )
-    #ouhyg
+    
     print(lst)
     #store all paramters in it's own lists
     ylst = lst[0]
