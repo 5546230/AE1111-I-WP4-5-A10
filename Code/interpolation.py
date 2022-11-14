@@ -23,13 +23,15 @@ get_cdi = sp.interpolate.interp1d(ylst, Cdilst, kind="cubic", fill_value="extrap
 
 get_cm = sp.interpolate.interp1d(ylst, Cmlst, kind="cubic", fill_value="extrapolate")
 
+
+#aerodynamic forces functions
 def get_Lspan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)
 
-def get_cmspan(y):
+def get_mspan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)**2
 
-def get_cdispan(y):
+def get_dispan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)
 
 estimate_l, error_l = sp.integrate.quad(get_Lspan,0,12)
