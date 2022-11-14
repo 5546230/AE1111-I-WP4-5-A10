@@ -10,7 +10,7 @@ filename = "Data\MainWing_a=10.00_v=10.00ms.csv"
 ylst, clst, ailst, Cllst, Cdilst, Cmlst = get_lst(filename)
 
 #define flow conditions
-v = 10                   #[m/s]
+v = 10                  #[m/s]
 rho = 1.225             #[m/s}
 q = 0.5* rho *v**2      #[Pa]
 
