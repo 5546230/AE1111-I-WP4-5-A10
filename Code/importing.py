@@ -19,6 +19,6 @@ def get_lst(filename: str) -> np.ndarray:
     Cdilst = lst[5]
     Cmlst = lst[7]
 
-    #return the lists
+    #return the lists!
     return ylst, clst, ailst, Cllst, Cdilst, Cmlst
 
