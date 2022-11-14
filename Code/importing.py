@@ -2,7 +2,7 @@ import numpy as np
 from scipy import interpolate
 
 def get_lst(filename: str) -> np.ndarray:
-    '''import the data file'''
+    '''import the data file from XFLR5 and extract the values'''
     #get a numpy array of the data with the header and footer skipped
     lst = np.genfromtxt(
         filename, 
