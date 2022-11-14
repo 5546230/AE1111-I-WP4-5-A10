@@ -3,6 +3,7 @@ import scipy as sp
 from scipy import interpolate
 from importing import get_lst
 from matplotlib import pyplot as plt
+from scipy import integrate
 
 #get the uninterolated values
 filename = "Data\MainWing_a=10.00_v=10.00ms.csv"
@@ -24,6 +25,10 @@ get_cdi = sp.interpolate.interp1d(ylst, Cdilst, kind="cubic", fill_value="extrap
 get_cm = sp.interpolate.interp1d(ylst, Cmlst, kind="cubic", fill_value="extrapolate")
 
 get_Lspan = sp.interpolate.interp1d(ylst, Lspanlst, kind="cubic", fill_value="extrapolate")
+
+estimate_cl = sp.integrate.quad(get_cl,0,12)
+print(estimate_cl)
+
 
 # y = np.linspace(0.5,12,100)
 # Lspan = get_Lspan(y)
