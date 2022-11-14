@@ -10,8 +10,8 @@ filename = "Data\MainWing_a=10.00_v=10.00ms.csv"
 ylst, clst, ailst, Cllst, Cdilst, Cmlst = get_lst(filename)
 
 #define flow conditions
-v = 10                  #[m/s]
-rho = 1.225             #[m/s}
+v= 10                   #[m/s]
+rho = 1.225             #[kg/m^3]
 q = 0.5* rho *v**2      #[Pa]
 
 #interpolation functions
@@ -23,23 +23,18 @@ get_cdi = sp.interpolate.interp1d(ylst, Cdilst, kind="cubic", fill_value="extrap
 
 get_cm = sp.interpolate.interp1d(ylst, Cmlst, kind="cubic", fill_value="extrapolate")
 
-
-#aerodynamic forces functions
-def get_Lspan(y: float) -> np.ndarray:
-    '''calulates the lift per unit span at a y along the span'''
+def get_Lspan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)
 
-def get_mspan(y: float) -> np.ndarray:
-    '''calulates the moment per unit span at a y along the span'''
+def get_cmspan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)**2
 
-def get_dispan(y: float) -> np.ndarray:
-    '''calulates the induced drag per unit span at a y along the span'''
+def get_cdispan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)
 
-estimate_l, error_l = sp.integrate.quad(get_Lspan,0,12)
+estimate_Lift, error_l = sp.integrate.quad(get_Lspan,0,12)
 estimate_S, error_s = sp.integrate.quad(get_c, 0,12)
-estimate_cl = estimate_l/(q*estimate_S)
+estimate_cl = estimate_Lift/(q*estimate_S)
 
 # y = np.linspace(0.5,12,100)
 # Lspan = get_Lspan(y)
