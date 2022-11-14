@@ -10,8 +10,9 @@ filename = "Data\MainWing_a=10.00_v=10.00ms.csv"
 ylst, clst, ailst, Cllst, Cdilst, Cmlst = get_lst(filename)
 
 #define flow conditions
-v= 10#[m/s]
-rho = 1.225#[m/s}
+v= 10                   #[m/s]
+rho = 1.225             #[m/s}
+q = 0.5* rho *v**2      #[Pa]
 
 #interpolation functions
 get_c = sp.interpolate.interp1d(ylst, clst, kind="linear", fill_value="extrapolate")
@@ -31,8 +32,9 @@ def get_cmspan(y):
 def get_cdispan(y):
     return 0.5*rho*v**2*get_cl(y)*get_c(y)
 
-estimate_cl, error_cl = sp.integrate.quad(get_Lspan,0,12)
-print(estimate_cl)
+estimate_l, error_l = sp.integrate.quad(get_Lspan,0,12)
+estimate_S, error_s = sp.integrate.quad(get_c, 0,12)
+estimate_cl = estimate_l/(q*estimate_S)
 
 # y = np.linspace(0.5,12,100)
 # Lspan = get_Lspan(y)
