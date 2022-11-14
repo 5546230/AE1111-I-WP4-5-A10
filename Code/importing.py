@@ -20,7 +20,7 @@ def get_lst(filename: str) -> np.ndarray:
     Cdilst = lst[5]
     Cmlst = lst[7]
 
-    #return the lists
+    #return the lists!
     return ylst, clst, ailst, Cllst, Cdilst, Cmlst
 
 ylst, clst, ailst, Cllst, Cdilst, Cmlst = get_lst("Data\MainWing_a=0.00_v=10.00ms.csv")
