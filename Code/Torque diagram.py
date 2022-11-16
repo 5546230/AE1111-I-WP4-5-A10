@@ -14,7 +14,7 @@ for y in (y_axis):
     
 #Plot the values
 plt.plot(y_axis, m_span)
-plt.title("Torque distribution")
+plt.title("Torque distribution at quarter chord")
 plt.ylabel("Torque [Nm]")
 plt.xlabel("Spanwise location [m]")
 plt.show()
