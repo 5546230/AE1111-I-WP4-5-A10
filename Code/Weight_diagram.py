@@ -11,6 +11,11 @@ def spar_weight_075(y):
     w = 2700*0.063*3.5*(1-(1-0.372)*(y/11.98))*9.81*t
     return w 
 
+def fuel_weight(y):
+    
+    return
+
+
 def get_Weight(y):
     return spar_weight_025(y)+spar_weight_075(y) 
 
@@ -18,7 +23,8 @@ def main():
     y_axis = np.linspace(0,12,1000)
     Weight=get_Weight(y_axis)
 
-    print(sp.integrate.quad(get_Weight, 0, 11.98))
+    val, _=(sp.integrate.quad(get_Weight, 0, 11.98))
+    print(val/9.81)
     plt.plot(y_axis, Weight)
     plt.title("Spanwise Weight distribution")
     plt.xlabel("Spanwise location [m]")
