@@ -9,7 +9,7 @@ y_axis = np.linspace(0.5,11.98, 1000)
 
 
 def get_resultant(y):
-    return get_Lspan(y,10/180*np.pi,10,1.225)-get_Weight(y)
+    return get_Lspan(y,1/180*np.pi,200, 0.287446962)-get_Weight(y)
 
 shear = []
 for y in y_axis:

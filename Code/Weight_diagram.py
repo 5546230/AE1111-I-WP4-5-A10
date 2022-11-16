@@ -12,12 +12,12 @@ def spar_weight_075(y):
     return w 
 
 def fuel_weight(y):
-    
-    return
+    w = 9.81*0.04425*3.5**2*804*(1-(1-0.372)*(y/11.98))**2
+    return w
 
 
 def get_Weight(y):
-    return spar_weight_025(y)+spar_weight_075(y) 
+    return spar_weight_025(y)+spar_weight_075(y)+ fuel_weight(y)
 
 def main():
     y_axis = np.linspace(0,12,1000)
