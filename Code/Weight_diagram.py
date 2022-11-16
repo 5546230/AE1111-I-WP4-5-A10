@@ -13,4 +13,5 @@ plt.plot(y_axis, Weight)
 plt.title("Spanwise Weight distribution")
 plt.xlabel("Spanwise location [m]")
 plt.ylabel("Weight [N]")
+plt.show()
 
