@@ -6,9 +6,14 @@ from matplotlib import pyplot as plt
 
 #calculate the values
 steps = 100
-y_axis=np.linspace(0.1,12,steps)
+b = 11.98
+y_axis=np.linspace(0.1,b,steps)
 Lspan = get_Lspan(y_axis)
-bending_moment = Lspan*y_axis
+bending_moment =[]
+for i in y_axis:
+    bending_moment_val, error_bend = sp.integrate.quad(get_Lspan,i,b)
+    bending_moment.append(bending_moment_val)
+
 
 #plot the values 
 fig, (ax1,ax2) = plt.subplots(2)
