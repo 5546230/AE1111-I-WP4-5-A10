@@ -16,5 +16,5 @@ def main():
     plt.ylabel("Weight [N]")
     plt.show()
 
-if __name__="__main__":
+if __name__=="__main__":
     main()
