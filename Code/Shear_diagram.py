@@ -1,21 +1,23 @@
 from Weight_diagram import get_Weight
 from interpolation import get_Lspan
+import scipy as sp
 import numpy as np
+from matplotlib import pyplot as plt
 
 
 y_axis = np.linspace(0.5,11.98, 1000)
 
 
 def get_resultant(y):
-    return get_Lspan(y,10/180*np.pi,10,1.225)+get_Weight(y)
+    return get_Lspan(y,10/180*np.pi,10,1.225)-get_Weight(y)
 
-x_axis = np.linspace(0.5,11.98, 1000)
+shear = []
+for y in y_axis:
+    shear_val, error = sp.integrate.quad(get_resultant, y, 11.98)
+    shear.append(shear_val)
 
-
-#plt.plot(y_axis,x_axis)# get_resultant(y_axis))
-#plt.title("bla lift distribution")
-#plt.ylabel("bla [N]")
-#plt.xlabel("bla location [m]")
-#plt.show()
-
-print("hihhh")
+plt.plot(y_axis, shear)# get_resultant(y_axis))
+plt.title("Shear force diagram")
+plt.ylabel("bla [N]")
+plt.xlabel("bla location [m]")
+plt.show()
