@@ -5,11 +5,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-y_axis = np.linspace(0.5,11.98, 1000)
+y_axis = np.linspace(0.5,11.98, 100)
 
 
-def get_resultant(y):
+def get_resultant(y: float) -> float:
+    '''get the resultant force'''
     return get_Lspan(y,1/180*np.pi,200, 0.287446962)-get_Weight(y)
+
 
 shear = []
 for y in y_axis:

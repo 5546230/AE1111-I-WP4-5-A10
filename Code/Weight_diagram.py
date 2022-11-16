@@ -21,7 +21,7 @@ def fuel_weight(y):
 
 
 def get_Weight(y):
-    return A_root*((lamda-1)/12*y+1)**2*mass/volume   
+    return A_root*((lamda-1)/12*y+1)**2*mass/volume + fuel_weight(y)
 
 def main():
     y_axis = np.linspace(0,12,1000)
