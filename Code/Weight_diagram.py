@@ -2,6 +2,13 @@ import scipy as sp
 import numpy as np
 from matplotlib import pyplot as plt
 
+def spar_weight_025(y):
+    w = 2700*0.114*3.5*(1-(1-0.372)(y/11.98))
+    return
+
+def spar_weight_075(y):
+    return
+
 def get_Weight(y):
     return y 
 
