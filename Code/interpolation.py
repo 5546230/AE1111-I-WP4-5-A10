@@ -77,7 +77,3 @@ estimate_Lift, error_l = sp.integrate.quad(get_Lspan, 0.1,12, args = (alpha, v, 
 estimate_S, error_s = sp.integrate.quad(get_c, 0,12)
 estimate_cl = estimate_Lift/(0.5*rho*v**2*estimate_S)
 
-# y = np.linspace(0.5,12,100)
-# Lspan = get_Lspan(y)
-# plt.plot(y,Lspan)
-# plt.show()
