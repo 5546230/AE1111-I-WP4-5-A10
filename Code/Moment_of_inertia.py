@@ -34,4 +34,4 @@ I_xx_4 = 1/12*y*H**3*math.sin(beta_2)**2 + A_4*(z_centroid-H/2*math.sin(beta_2))
 
 
 I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4
-print(I_xx)
+
