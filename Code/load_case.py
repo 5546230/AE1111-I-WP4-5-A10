@@ -33,8 +33,6 @@ class LoadCase:
     def z2_force(self, y: float) -> float:
         return -(get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha)- get_dispan(y, self.alpha, self.v, self.rho)*np.sin(self.alpha)
     
-    def x2_force(self, y: float) -> float:
-        return (get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.sin(self.alpha)#+ get_dispan(y, self.alpha, self.v, self.rho)*np.cos(self.alpha)
 
     def z2_shear_calc(self)->None:
         y_axis = np.linspace(0,11.98, 100)
@@ -45,15 +43,6 @@ class LoadCase:
 
         self.z2_shear = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
-    def x2_shear_calc(self)->None:
-        y_axis = np.linspace(0,11.98, 100)
-        shear = []
-        for y in y_axis:
-            shear_val, _= sp.integrate.quad(self.x2_force, y, 11.98)
-            shear.append(shear_val)
-        
-        self.x2_shear = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
-
     def z2_moment_calc(self)->None:
         y_axis = np.linspace(0,11.98, 100)
         shear = []
@@ -63,14 +52,6 @@ class LoadCase:
         
         self.z2_moment = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
-    def x2_moment_calc(self)->None:
-        y_axis = np.linspace(0,11.98, 100)
-        shear = []
-        for y in y_axis:
-            shear_val, _= sp.integrate.quad(self.x2_shear, y, 11.98)
-            shear.append(-shear_val)
-        
-        self.x2_moment = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
     def z2_shear_diagram(self)-> None:
         y_axis = np.linspace(0,11.98,100)
@@ -82,15 +63,6 @@ class LoadCase:
         plt.title("Vertical shearforce diagram")
         plt.show()
 
-    def x2_shear_diagram(self)-> None:
-        y_axis = np.linspace(0,11.98,100)
-        x_axis = self.x2_shear(y_axis)
-
-        plt.plot(y_axis, x_axis)
-        plt.ylabel("Shear force [N]")
-        plt.xlabel("Spanwise location [m]")
-        plt.title("Horizontal shearforce diagram")
-        plt.show()
 
     def z2_moment_diagram(self)-> None:
         y_axis = np.linspace(0,11.98,100)
