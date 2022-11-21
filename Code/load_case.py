@@ -24,11 +24,9 @@ class LoadCase:
 
         #get shear functions
         self.z2_shear_calc()
-        self.x2_shear_calc()
 
         #get mometn functions
         self.z2_moment_calc()
-        self.x2_moment_calc()
     
     def z2_force(self, y: float) -> float:
         return -(get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha)- get_dispan(y, self.alpha, self.v, self.rho)*np.sin(self.alpha)
