@@ -27,10 +27,10 @@ class LoadCase:
         self.x2_shear_calc()
     
     def z2_force(self, y: float) -> float:
-        return (get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha)+ get_dispan(y, self.alpha, self.v, self.rho)*np.sin(self.alpha)
+        return (get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha)#+ get_dispan(y, self.alpha, self.v, self.rho)*np.sin(self.alpha)
     
     def x2_force(self, y: float) -> float:
-        return -(get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.sin(self.alpha)+ get_dispan(y, self.alpha, self.v, self.rho)*np.cos(self.alpha)
+        return -(get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.sin(self.alpha)#+ get_dispan(y, self.alpha, self.v, self.rho)*np.cos(self.alpha)
 
     def z2_shear_calc(self)->None:
         y_axis = np.linspace(0,11.98, 100)
@@ -39,7 +39,7 @@ class LoadCase:
             shear_val, _= sp.integrate.quad(self.z2_force, y, 11.98)
             shear.append(-shear_val)
 
-        self.z2_shear = sp.interpolate.p1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
+        self.z2_shear = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
     def x2_shear_calc(self)->None:
         y_axis = np.linspace(0,11.98, 100)
@@ -48,7 +48,7 @@ class LoadCase:
             shear_val, _= sp.integrate.quad(self.x2_force, y, 11.98)
             shear.append(-shear_val)
         
-        self.x2_shear = sp.interpolate.p1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
+        self.x2_shear = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
     def z2_shear_diagram(self)-> None:
         y_axis = np.linspace(0,11.98,100)
@@ -58,6 +58,7 @@ class LoadCase:
         plt.ylabel("Shear force [N]")
         plt.xlabel("Spanwise location [m]")
         plt.title("Vertical shearforce diagram")
+        plt.show()
 
     def x2_shear_diagram(self)-> None:
         y_axis = np.linspace(0,11.98,100)
@@ -67,6 +68,7 @@ class LoadCase:
         plt.ylabel("Shear force [N]")
         plt.xlabel("Spanwise location [m]")
         plt.title("Horizontal shearforce diagram")
+        plt.show()
 
     def torque_diagram(self)-> None:
         torque_diagram(self.alpha, self.v, self.rho)
