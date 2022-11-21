@@ -7,24 +7,24 @@ t = 1*10**-3
 
 
 
-h_up = 0.114*c-0.096*c
-h_mid = 0.0808*c
+h_up = 0.114*c-0.096*c #
+h_mid = 0.0808*c #height right side
 h_low = 0.0331*c
 h_1 = 0.114*c-0.0808*c
 h_2 = 0.0331*c
-h = 0.114*c
-l = 0.55*c
+h = 0.114*c #height left side
+l = 0.55*c #lenght
 
 H = 0.551*c
-beta_1=math.atan(h_up/2)
-beta_2=math.atan(h_2/l)
+beta_1=math.atan(h_up/2) #top angle
+beta_2=math.atan(h_2/l) #bottom angle
 
-A_1 = h*t
+A_1 = h*t 
 A_2 = H*t
 A_3 = h_mid*t
 A_4 = H*t
 
-z_centroid = (2*h_2/3*A_3+(h_2+h_mid/2)*A_2+(h_1+h_up/3)*A_1)/(A_1+A_2+A_3)
+z_centroid = (h_1-h/2)*A_3+h/2*A_1+#(2*h_2/3*A_3+(h_2+h_mid/2)*A_2+(h_1+h_up/3)*A_1)/(A_1+A_2+A_3)
 
 I_xx_1 = 1/12*t*h**3 + A_1*(h-z_centroid)**2
 I_xx_2 = 1/12*t*H**3*math.sin(beta_1)**2+A_2*(h-H/2*math.sin(beta_1)-z_centroid)**2
