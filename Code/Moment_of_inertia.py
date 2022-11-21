@@ -17,7 +17,7 @@ def get_ixx(y: float) -> float:
     l = 0.55*c #lenght
 
     H = 0.551*c
-    beta_1=math.atan(h_up/2) #top angle
+    beta_1=math.atan(h_up/l) #top angle
     beta_2=math.atan(h_2/l) #bottom angle
 
     A_1 = h*t 
@@ -36,4 +36,4 @@ def get_ixx(y: float) -> float:
 
     I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4
     return(I_xx)
-print(get_ixx(12))
+print(get_ixx(1))
