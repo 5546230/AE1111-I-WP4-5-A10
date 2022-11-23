@@ -12,9 +12,9 @@ def get_twist(y, load, t):
     J = get_J(y, t)
     G = 68e9*3/8
     return (-torque/(G*J))
-def get_t():
-    load = LoadCase(2.2390, 16575.6*9.80665, 289.223, 0)
 
+def get_t():
+    load = LoadCase(2.62, 16575.6*9.80665, 156.42, 12500)
     y_axis = np.linspace(0,11.98,100)
     t=1.5e-3
 
@@ -25,10 +25,10 @@ def get_t():
             twist.append(twist_val)
         
         if twist[-1]<=9.5/180*np.pi and twist[-1]>=9/190*np.pi:
-            return t
+            return t, twist[-1]/np.pi*180
         t=t*twist[-1]/(9.5/180*np.pi)
 
-
+print(get_t())
 # print(np.max(twist)/np.pi*180)
 # plt.plot(y_axis,twist)
 # plt.show()

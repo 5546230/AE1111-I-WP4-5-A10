@@ -1,10 +1,11 @@
 import math
 import numpy as np
 from matplotlib import pyplot as plt
-def get_ixx(y: float) -> float:
+
+def get_ixx(y: float, t:float) -> float:
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
-    t = 1.2*10**-3 #thickness
+    # t = 1.2*10**-3 #thickness
 
     A_stringer = 2 #TBD #Area of a stringer
     d_stringer = 2 #TBD #Distance from centroid to a stringer
