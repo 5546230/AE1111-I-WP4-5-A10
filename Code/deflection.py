@@ -18,7 +18,7 @@ for y in y_axis:
     defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= load)
     defl.append(defl_val)
 
-defl_func = sp.interpolate.interp1d(y_axis, defl, kind="cubic", fill_value="extrapolate")
+defl_func = sp.interpolate.interp1d(y_axis, defl, kind="linear")
 
 deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
 
