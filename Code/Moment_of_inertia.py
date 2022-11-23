@@ -6,8 +6,10 @@ def get_ixx(y: float) -> float:
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
     t = 1*10**-3 #thickness
 
-
-
+    A_stringer = 2 #TBD
+    d_stringer = 2 #TBD
+    nr = 0 #number of stringers
+    
     h_up = 0.114*c-0.096*c #
     h_mid = 0.0808*c #height right side
     h_low = 0.0331*c
@@ -34,7 +36,7 @@ def get_ixx(y: float) -> float:
 
 
 
-    I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4
+    I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4 + nr*A_stringer*d_stringer**2
     return(I_xx)
 
 
