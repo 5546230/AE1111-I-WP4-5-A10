@@ -2,9 +2,9 @@ import math
 import numpy as np
 
 def get_ixx(y: float) -> float:
-    c_r = 3.49 #[m]
+    c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
-    t = 1*10**-3
+    t = 1*10**-3 #thickness
 
 
 
@@ -36,4 +36,17 @@ def get_ixx(y: float) -> float:
 
     I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4
     return(I_xx)
-print(get_ixx(1))
+
+
+def get_J(y: float) -> float:
+    c_r = 3.49 #root chord[m]
+    c = c_r-c_r*(1-0.372)/12*y #formula for chord
+    t = 1*10**-3 #thickness
+   
+    A_enclosed= 0.5*(0.114*c + 0.063*c)*0.55*c #enclosed area of the wingbox
+    perimeter= (0.114*c + 2*0.551*c + 0.063*c) #contour of the wingbox
+
+    J = 4*A_enclosed**2/(perimeter/t)
+
+    return(J)
+
