@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 def get_ixx(y: float) -> float:
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
-    t = 2*10**-3 #thickness
+    t = 1.2*10**-3 #thickness
 
     A_stringer = 2 #TBD #Area of a stringer
     d_stringer = 2 #TBD #Distance from centroid to a stringer
@@ -48,10 +48,10 @@ def get_ixx(y: float) -> float:
 # plt.show()
 
 
-def get_J(y: float) -> float:
+def get_J(y: float, t:float) -> float:
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
-    t = 1*10**-3 #thickness
+    # t = 1.5*10**-3 #thickness
    
     A_enclosed= 0.5*(0.114*c + 0.063*c)*0.55*c #enclosed area of the wingbox
     perimeter= (0.114*c + 2*0.551*c + 0.063*c) #contour of the wingbox

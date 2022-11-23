@@ -4,7 +4,7 @@ import scipy as sp
 import numpy as np
 from scipy import interpolate
 
-def get_deflection(y, load):
+def get_deflection(y: float, load: LoadCase) -> float:
     moment = load.z2_moment(y)
     ixx = get_ixx(y)
     E = 68e9
