@@ -4,11 +4,8 @@ from matplotlib import pyplot as plt
 def get_ixx(y: float) -> float:
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
-    t = 2*10**-3 #thickness
+    t = 1*10**-3 #thickness
 
-    A_stringer = 2 #TBD #Area of a stringer
-    d_stringer = 2 #TBD #Distance from centroid to a stringer
-    nr = 0 #number of stringers
     
     h_up = 0.027543*c #
     h_mid = 0.063*c #height right side
@@ -27,16 +24,23 @@ def get_ixx(y: float) -> float:
     A_3 = h_mid*t
     A_4 = H_1*t
 
-    z_centroid = ((h_low+h_mid/2)*A_3+h/2*A_1+H_1/2*np.sin(beta_2)*A_4+A_2*(h-H_2/2*np.sin(beta_1)))/(A_1+A_2+A_3+A_4)#(2*h_2/3*A_3+(h_2+h_mid/2)*A_2+(h_1+h_up/3)*A_1)/(A_1+A_2+A_3)
+    z_centroid = ((h_low+h_mid/2)*A_3+h/2*A_1+H_1/2*np.sin(beta_2)*A_4+A_2*(h-H_2/2*np.sin(beta_1)))/(A_1+A_2+A_3+A_4)
     
     I_xx_1 = 1/12*t*h**3 + A_1*(h/2-z_centroid)**2
     I_xx_2 = 1/12*t*H_2**3*math.sin(beta_1)**2+A_2*(h-H_2/2*np.sin(beta_1)-z_centroid)**2
     I_xx_3 = 1/12*t*h_mid**3+A_3*(h_low+h_mid/2-z_centroid)**2
     I_xx_4 = 1/12*t*H_1**3*math.sin(beta_2)**2 + A_4*(z_centroid-H_1/2*np.sin(beta_2))**2
 
+    A_stringer = 0.000625#Area of a stringer
+    d_stringer = (math.tan(beta_1)*l/2+z_centroid)   #Distance from centroid to a stringer
+    nr_up = 0 #number of upper part stringers
+    nr_down = 0 #number of lower part stringers
 
+    #case 1: t=2.2 no stringers
+    #case 2: t=1 2 stringers (side=35mm)
+    #case 3: t=1 4 stringers (side=25mm)
 
-    I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4 + nr*A_stringer*d_stringer**2
+    I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4 + nr_up*A_stringer*(math.tan(beta_1)*l/2+z_centroid)**2 + nr_down*A_stringer*(z_centroid-math.tan(beta_2)*l/2)**2
     return(I_xx)
 
 # y_axis=np.linspace(0.1,11.98,100)
