@@ -39,13 +39,13 @@ def get_ixx(y: float) -> float:
     I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4 + nr*A_stringer*d_stringer**2
     return(I_xx)
 
-y_axis=np.linspace(0.1,11.98,100)
-i_xx=[]
-for y in y_axis:
-    value= get_ixx(y)
-    i_xx.append(value)
-plt.plot(y_axis,i_xx)
-plt.show()
+# y_axis=np.linspace(0.1,11.98,100)
+# i_xx=[]
+# for y in y_axis:
+#     value= get_ixx(y)
+#     i_xx.append(value)
+# plt.plot(y_axis,i_xx)
+# plt.show()
 
 
 def get_J(y: float) -> float:
