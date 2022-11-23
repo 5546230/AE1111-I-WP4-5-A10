@@ -6,8 +6,8 @@ def get_ixx(y: float) -> float:
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
     t = 1*10**-3 #thickness
 
-    A_stringer = 2 #TBD
-    d_stringer = 2 #TBD
+    A_stringer = 2 #TBD #Area of a stringer
+    d_stringer = 2 #TBD #Distance from centroid to a stringer
     nr = 0 #number of stringers
     
     h_up = 0.114*c-0.096*c #
