@@ -29,20 +29,23 @@ class LoadCase:
         self.z2_moment_calc()
     
     def z2_force(self, y: float) -> float:
+        '''get the forces in the z direction of the wingbox at a location y along the span'''
         return -(get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha)- get_dispan(y, self.alpha, self.v, self.rho)*np.sin(self.alpha)
     
 
     def z2_shear_calc(self)->None:
+        '''generates the shear function in z direction'''
         y_axis = np.linspace(0,11.98, 100)
         shear = []
         for y in y_axis:
             shear_val, _= sp.integrate.quad(self.z2_force, y, 11.98)
             shear.append(shear_val)
 
-            #generating the function for shear by interpolation
+        #generating the function for shear by interpolation
         self.z2_shear = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
     def z2_moment_calc(self)->None:
+        '''generates the bending moment function'''
         y_axis = np.linspace(0,11.98, 100)
         shear = []
         for y in y_axis:
@@ -53,6 +56,7 @@ class LoadCase:
 
 
     def z2_shear_diagram(self)-> None:
+        '''generates the shear diagram'''
         y_axis = np.linspace(0,11.98,100)
         x_axis = self.z2_shear(y_axis)
 
@@ -64,6 +68,7 @@ class LoadCase:
 
 
     def z2_moment_diagram(self)-> None:
+        '''generates the moment diagram'''
         y_axis = np.linspace(0,11.98,100)
         x_axis = self.z2_moment(y_axis)
 
@@ -74,6 +79,7 @@ class LoadCase:
         plt.show()
 
     def x2_moment_diagram(self)-> None:
+        '''generates the moment diagram'''
         y_axis = np.linspace(0,11.98,100)
         x_axis = self.x2_moment(y_axis)
 
@@ -84,9 +90,11 @@ class LoadCase:
         plt.show()
 
     def torque_diagram(self)-> None:
+        '''generates the torque diagram'''
         torque_diagram(self.alpha, self.v, self.rho)
 
     def diagram(self)-> None:
+        '''generates the diagrams'''
         y_axis = np.linspace(0,11.98,100)
         z_shear = self.z2_shear(y_axis)
         bending_moment = self.z2_moment(y_axis)

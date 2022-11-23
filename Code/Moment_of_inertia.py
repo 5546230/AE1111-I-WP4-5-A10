@@ -3,9 +3,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 def get_ixx(y: float, t:float) -> float:
+    '''returns the area moment of inertia at a y location along the span for a given thickness t'''
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
-    t = 2*10**-3 #thickness
+    # t = 2*10**-3 #thickness
 
     
     h_up = 0.027543*c #
@@ -25,8 +26,10 @@ def get_ixx(y: float, t:float) -> float:
     A_3 = h_mid*t
     A_4 = H_1*t
 
+    #calculate the z coordinate of the wingbox
     z_centroid = ((h_low+h_mid/2)*A_3+h/2*A_1+H_1/2*np.sin(beta_2)*A_4+A_2*(h-H_2/2*np.sin(beta_1)))/(A_1+A_2+A_3+A_4)
     
+    #calculate the moment of inertia components
     I_xx_1 = 1/12*t*h**3 + A_1*(h/2-z_centroid)**2
     I_xx_2 = 1/12*t*H_2**3*math.sin(beta_1)**2+A_2*(h-H_2/2*np.sin(beta_1)-z_centroid)**2
     I_xx_3 = 1/12*t*h_mid**3+A_3*(h_low+h_mid/2-z_centroid)**2
@@ -54,6 +57,7 @@ def get_ixx(y: float, t:float) -> float:
 
 
 def get_J(y: float, t:float) -> float:
+    '''returns the polar moment of inertia for a given thickness t at a location y along the span'''
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
     # t = 1.5*10**-3 #thickness

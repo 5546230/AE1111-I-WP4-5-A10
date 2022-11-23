@@ -27,6 +27,7 @@ get_cdi_10 = sp.interpolate.interp1d(ylst, Cdilst_10, kind="cubic", fill_value="
 
 get_cm_10 = sp.interpolate.interp1d(ylst, Cmlst_10, kind="cubic", fill_value="extrapolate")
 
+#aerodynamic properties of the wing from the XFLR files in ../Data
 cl_0 = 0.441429
 cl_10 = 1.295089
 
@@ -37,6 +38,7 @@ cdi_0 = 0.006339
 cdi_10 = 0.052246
 
 def get_alpha(cld: float)-> float:
+    '''returns the angle of attack for a desired lift coefficient cld'''
     sin = (cld-cl_0)/(cl_10-cl_0)*np.sin(10/180*np.pi)
     return np.arcsin(sin)
 

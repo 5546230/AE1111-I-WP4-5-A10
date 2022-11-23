@@ -7,13 +7,15 @@ from interpolation import get_mspan
 from matplotlib import pyplot as plt
 
 
-def get_twist(y, load, t):
+def get_twist(y: float, load: LoadCase, t: float) -> float:
+    '''the relation between the twist angle, polar moment of inertia and the torque'''
     torque = get_mspan(y, load.alpha, load.v, load.rho)
     J = get_J(y, t)
     G = 68e9*3/8
     return (-torque/(G*J))
 
-def get_t():
+def get_t() -> tuple:
+    '''optimisation algortithm for the minimum thickness for torque'''
     load = LoadCase(2.62, 16575.6*9.80665, 156.42, 12500)
     y_axis = np.linspace(0,11.98,100)
     t=1.5e-3

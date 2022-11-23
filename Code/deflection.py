@@ -5,12 +5,14 @@ import numpy as np
 from scipy import interpolate
 
 def get_deflection(y: float, load: LoadCase, t:float) -> float:
+    '''the relation between the moment, moment of inertia and the second derivative of the deflection'''
     moment = load.z2_moment(y)
     ixx = get_ixx(y, t)
     E = 68e9
     return (-moment/(E*ixx))
 
-def get_t():
+def get_t() -> tuple:
+    '''calculate the minimum thickness for the deflection through an iterative process'''
     load = LoadCase(2.62, 16575.6*9.80665, 156.42, 12500)
 
     y_axis = np.linspace(0,11.98,100)
