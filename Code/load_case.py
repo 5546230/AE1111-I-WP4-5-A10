@@ -39,6 +39,7 @@ class LoadCase:
             shear_val, _= sp.integrate.quad(self.z2_force, y, 11.98)
             shear.append(shear_val)
 
+            #generating the function for shear by interpolation
         self.z2_shear = sp.interpolate.interp1d(y_axis, shear, kind="cubic", fill_value="extrapolate")
 
     def z2_moment_calc(self)->None:
@@ -108,15 +109,15 @@ class LoadCase:
         plt.show()
 
 if __name__=="__main__":
-    # load1_1 = LoadCase(2.3367, 9318.5*9.80665, 289.223, 0)
-    load1_2 = LoadCase(2.2390, 16575.6*9.80665, 289.223, 0)
-    # load1_3 = LoadCase(2.3156, 10328.5*9.80665, 289.223, 0)
-    # load2_1 = LoadCase(2.3367, 9318.5*9.80665, 250.786, 0)
-    # load2_2 = LoadCase(2.2390, 16575.6*9.80665, 250.786, 0)
-    # load2_3 = LoadCase(2.3156, 10328.5*9.80665, 250.786, 0)
+    # load1_1 = LoadCase(2.62, 9318.5*9.80665, 49.94, 0)
+    # load1_2 = LoadCase(2.62, 16575.6*9.80665, 66.6, 0)
+    # load1_3 = LoadCase(2.62, 10328.5*9.80665, 52.57, 0)
+    # load2_1 = LoadCase(2.62, 9318.5*9.80665, 117.28, 12500)
+    load2_2 = LoadCase(2.62, 16575.6*9.80665, 156.42, 12500)
+    # load2_3 = LoadCase(2.62, 10328.5*9.80665, 132.47, 12500)
 
     # load1_1.diagram()# = LoadCase(2.3367, 9318.5*9.80665, 289.223, 0)
-    load1_2.diagram()# = LoadCase(2.2390, 16575.6*9.80665, 289.223, 0)
+    # load1_2.diagram()# = LoadCase(2.2390, 16575.6*9.80665, 289.223, 0)
     # load1_3.diagram()# = LoadCase(2.3156, 10328.5*9.80665, 289.223, 0)
     # load2_1.diagram()# = LoadCase(2.3367, 9318.5*9.80665, 250.786, 0)
     # load2_2.diagram()# = LoadCase(2.2390, 16575.6*9.80665, 250.786, 0)

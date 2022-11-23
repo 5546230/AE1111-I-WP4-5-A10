@@ -4,22 +4,44 @@ import scipy as sp
 import numpy as np
 from scipy import interpolate
 
-def get_deflection(y, load):
+def get_deflection(y: float, load: LoadCase, t:float) -> float:
     moment = load.z2_moment(y)
-    ixx = get_ixx(y)
+    ixx = get_ixx(y, t)
     E = 68e9
     return (-moment/(E*ixx))
 
-load = LoadCase(2.2390, 16575.6*9.80665, 289.223, 0)
+def get_t():
+    load = LoadCase(2.62, 16575.6*9.80665, 156.42, 12500)
 
-y_axis = np.linspace(0,11.98,100)
-defl = []
-for y in y_axis:
-    defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= load)
-    defl.append(defl_val)
+    y_axis = np.linspace(0,11.98,100)
+    t=1.5e-3
+    for n in np.arange(99999):
+        defl = []
+        for y in y_axis:
+            defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= (load, t))
+            defl.append(defl_val)
 
-defl_func = sp.interpolate.interp1d(y_axis, defl, kind="linear")
+        defl_func = sp.interpolate.interp1d(y_axis, defl, kind="linear")
 
-deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
+        deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
 
-print(deflection)
+        if deflection>=-23.5*0.15 and deflection<=-23*0.15:
+            return t, deflection
+        t*=deflection/-23.5/0.15
+
+t= get_t()    
+print(t)
+
+# load = LoadCase(2.2390, 16575.6*9.80665, 289.223, 0)
+
+# y_axis = np.linspace(0,11.98,100)
+# defl = []
+# for y in y_axis:
+#     defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= load)
+#     defl.append(defl_val)
+
+# defl_func = sp.interpolate.interp1d(y_axis, defl, kind="linear")
+
+# deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
+
+# print(deflection)
