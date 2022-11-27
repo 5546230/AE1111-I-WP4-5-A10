@@ -28,9 +28,9 @@ class LoadCase:
         #get mometn functions
         self.z2_moment_calc()
     
-    def z2_force(self, y: float) -> float:
+    def z2_force(self, y: float, alpha=0) -> float:
         '''get the forces in the z direction of the wingbox at a location y along the span'''
-        return -(get_Lspan(y, self.alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha)- get_dispan(y, self.alpha, self.v, self.rho)*np.sin(self.alpha)
+        return -(get_Lspan(y, self.alpha+alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha+alpha)- get_dispan(y, self.alpha+alpha, self.v, self.rho)*np.sin(self.alpha+alpha)
     
 
     def z2_shear_calc(self)->None:

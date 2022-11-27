@@ -13,7 +13,7 @@ def get_deflection(y: float, load: LoadCase, t:float) -> float:
 
 def get_t() -> tuple:
     '''calculate the minimum thickness for the deflection through an iterative process'''
-    load = LoadCase(2.62, 16575.6*9.80665, 156.42, 12500)
+    load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
 
     y_axis = np.linspace(0,11.98,100)
     t=1.5e-3
@@ -27,7 +27,7 @@ def get_t() -> tuple:
 
         deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
 
-        if deflection>=-23.5*0.15 and deflection<=-23*0.15:
+        if deflection>=-23.5*0.15 and deflection<=-23.5*0.149:
             return t, deflection
         t*=deflection/-23.5/0.15
 

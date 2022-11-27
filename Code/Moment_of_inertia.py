@@ -54,6 +54,34 @@ def get_ixx(y: float, t:float) -> float:
 #     i_xx.append(value)
 # plt.plot(y_axis,i_xx)
 # plt.show()
+def get_zcentroid(y: float, t:float)-> float:
+    
+    c_r = 3.49 #root chord[m]
+    c = c_r-c_r*(1-0.372)/12*y #formula for chord
+    # t = 2*10**-3 #thickness
+
+    
+    h_up = 0.027543*c #
+    h_mid = 0.063*c #height right side
+    h_low = 0.023457*c
+    h_2 = h_low
+    h = 0.114*c #height left side
+    l = 0.55*c #lenght
+
+    H_1 = 0.5505*c #hyphotenus
+    H_2 = 0.55069*c
+    beta_1=math.atan(h_up/l) #top angle
+    beta_2=math.atan(h_2/l) #bottom angle
+
+    A_1 = h*t 
+    A_2 = H_2*t
+    A_3 = h_mid*t
+    A_4 = H_1*t
+
+    #calculate the z coordinate of the wingbox
+    z_centroid = ((h_low+h_mid/2)*A_3+h/2*A_1+H_1/2*np.sin(beta_2)*A_4+A_2*(h-H_2/2*np.sin(beta_1)))/(A_1+A_2+A_3+A_4)
+
+    return z_centroid
 
 
 def get_J(y: float, t:float) -> float:
