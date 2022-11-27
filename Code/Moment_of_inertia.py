@@ -97,3 +97,17 @@ def get_J(y: float, t:float) -> float:
 
     return(J)
 
+def diagram(t:float):
+    y_axis = np.linspace(0,11.98,100)
+    ixx_lst=[]
+    for y in y_axis:
+        ixx_lst.append(get_ixx(y, t))
+
+    plt.plot(y_axis, ixx_lst)
+    plt.xlabel("Spanwise location [m]")
+    plt.ylabel("Moment of inertia [m^4]")
+    plt.title(f"Moment of ineratia for a thickness of {t*1e3:.1f} [mm]")
+    plt.show()
+
+if __name__=="__main__":
+    diagram(2.4*1e-3)

@@ -51,7 +51,6 @@ def diagram(t:float):
     twist = [0]
     y_axis = np.linspace(0,11.98,101)
     load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
-    t=1e-3
     #calculate twist for each y value
     for i in np.arange(100):
         #get the twist value and include the extra angle of attack due to twist
@@ -59,11 +58,11 @@ def diagram(t:float):
         twist.append(twist_val)
 
     #plot the graph    
-    plt.plot(y_axis,twist)
+    plt.plot(y_axis,np.array(twist)/np.pi*180)
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Twist angle [deg]")
     plt.title(f"Twist angle for a thickness of {t*1e3:.1f} [mm]")
     plt.show()
 
 if __name__=="__main__":
-    diagram(1e-3)
+    diagram(1*1e-3)
