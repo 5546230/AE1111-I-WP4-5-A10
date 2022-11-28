@@ -17,7 +17,7 @@ def ISA_rho(h: float) -> float:
     #isa loop
     for i in np.arange(0,len(h_lst)-1):
         a = a_lst[i+1]
-        h_ref = np.min(h, h_lst[i+1])
+        h_ref = min(h, h_lst[i+1])
         if a == 0:
             p *= np.exp(g/(R*t)*(h_lst[i]-h_ref))
         else:

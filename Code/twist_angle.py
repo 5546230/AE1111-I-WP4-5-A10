@@ -14,8 +14,8 @@ def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
 
     #include the torque created by the vertical forces on the wingbox
     lift = -load.z2_force(y, load.alpha+alpha)
-    z_centroid = get_zcentroid(y, t)
-    torque_tot = torque + lift * (z_centroid-0.25*(3.49-3.49*(1-0.372)/12*y) )
+    c = 3.49-3.49*(1-0.372)/12*y
+    torque_tot = torque + lift * 0.3*c
 
     J = get_J(y, t)
     G = 68e9*3/8
@@ -45,7 +45,6 @@ def get_t() -> tuple:
         #update the thickness for next iteration
         t=t*twist[-1]/(9.5/180*np.pi)
 
-
 def diagram(t: float) -> None:        
     '''Get a twist diagram for a thickness t'''
     twist = [0]
@@ -66,4 +65,4 @@ def diagram(t: float) -> None:
     plt.show()
 
 if __name__=="__main__":
-    diagram(1*1e-3)
+    print(get_t())
