@@ -7,7 +7,6 @@ import scipy as sp
 from scipy import interpolate
 from matplotlib import pyplot as plt
 
-
 class LoadCase:
     def __init__(self, n: float, W: float, v: float, h: float) -> None:
         self.n = n

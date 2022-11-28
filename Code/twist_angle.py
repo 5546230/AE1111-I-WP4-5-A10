@@ -6,7 +6,6 @@ from scipy import interpolate
 from interpolation import get_mspan
 from matplotlib import pyplot as plt
 
-
 def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
     '''the relation between the twist angle, polar moment of inertia and the torque'''
 
@@ -52,7 +51,7 @@ def diagram(t: float) -> None:
     twist = [0]
     y_axis = np.linspace(0,11.98,101)
     load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
-    
+
     #calculate twist for each y value
     for i in np.arange(100):
         #get the twist value and include the extra angle of attack due to twist

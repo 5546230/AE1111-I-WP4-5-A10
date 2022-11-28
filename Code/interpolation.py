@@ -72,10 +72,10 @@ def get_dispan(y: float, alpha: float, v: float, rho: float) -> float:
     '''Returns the induced drag per unit span at spanwise location y. '''
     return 0.5*rho*v**2*get_Cdi(y, alpha)*get_c(y)
 
-alpha = 3/180*np.pi
-v = 10
-rho = 1.225
-estimate_Lift, error_l = sp.integrate.quad(get_Lspan, 0.1,12, args = (alpha, v, rho))
-estimate_S, error_s = sp.integrate.quad(get_c, 0,12)
-estimate_cl = estimate_Lift/(0.5*rho*v**2*estimate_S)
-
+if __name__=="__main__":
+    alpha = 3/180*np.pi
+    v = 10
+    rho = 1.225
+    estimate_Lift, error_l = sp.integrate.quad(get_Lspan, 0.1,12, args = (alpha, v, rho))
+    estimate_S, error_s = sp.integrate.quad(get_c, 0,12)
+    estimate_cl = estimate_Lift/(0.5*rho*v**2*estimate_S)
