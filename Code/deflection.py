@@ -14,7 +14,7 @@ def get_deflection(y: float, load: LoadCase, t:float) -> float:
 
 def get_t() -> tuple:
     '''calculate the minimum thickness for the deflection through an iterative process'''
-    load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
+    load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
 
     y_axis = np.linspace(0,11.98,100)
     t = 1.5e-3
@@ -62,6 +62,6 @@ def diagram(t: float):
     plt.show()
 
 if __name__=="__main__":
-    # t= get_t()    
-    # print(t)
-    diagram(2.4*1e-3)
+    t= get_t()    
+    print(t)
+    # diagram(2.4*1e-3)

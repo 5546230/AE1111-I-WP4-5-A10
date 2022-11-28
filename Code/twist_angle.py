@@ -1,4 +1,4 @@
-from Moment_of_inertia import get_J, get_zcentroid
+from Moment_of_inertia import get_J
 from load_case import LoadCase
 import scipy as sp
 import numpy as np
@@ -15,7 +15,9 @@ def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
     #include the torque created by the vertical forces on the wingbox
     lift = -load.z2_force(y, load.alpha+alpha)
     c = 3.49-3.49*(1-0.372)/12*y
-    torque_tot = torque + lift * 0.3*c
+
+    #include a safety factor
+    torque_tot = (torque - lift * 0.3*c) 
 
     J = get_J(y, t)
     G = 68e9*3/8
@@ -24,7 +26,7 @@ def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
 
 def get_t() -> tuple:
     '''optimisation algortithm for the minimum thickness for torque'''
-    load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
+    load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
     y_axis = np.linspace(0,11.98,100)
     t=1.5e-3
 
@@ -40,7 +42,7 @@ def get_t() -> tuple:
         
         #check if twist between limits
         if twist[-1]<=9.5/180*np.pi and twist[-1]>=9.49/180*np.pi:
-            return t, np.array(twist)/np.pi*180
+            return t
         
         #update the thickness for next iteration
         t=t*twist[-1]/(9.5/180*np.pi)
