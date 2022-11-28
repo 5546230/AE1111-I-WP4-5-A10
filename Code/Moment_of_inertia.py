@@ -88,19 +88,21 @@ def get_J(y: float, t:float) -> float:
 
     return(J)
 
-def ixx_diagram(t: float) -> None:
+def ixx_diagram(t: float, n_stringers: int, A_stringer: float) -> None:
     '''Get the diagram for Ixx as a function of y along the span for a thickness t'''
     y_axis = np.linspace(0,11.98,100)
     ixx_lst=[]
     #get the ixx for each y location
     for y in y_axis:
-        ixx_lst.append(get_ixx(y, t))
+        ixx_lst.append(get_ixx(y, t, n_stringers, A_stringer))
 
     #plot the values
+    fig=plt.figure()
+    fig.set_figwidth(8)
     plt.plot(y_axis, ixx_lst)
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Moment of Inertia [m^4]")
-    plt.title(f"Moment of Inertia for a thickness of {t*1e3:.1f} [mm]")
+    plt.title(f"Moment of Inertia for a thickness of {t*1e3:.1f} [mm], with {n_stringers} stringers of area {A_stringer*1e6:.1f} [mm^2]")
     plt.show()
 
 def J_diagram(t: float) -> None:
@@ -112,6 +114,8 @@ def J_diagram(t: float) -> None:
         J_lst.append(get_J(y, t))
 
     #plot the values
+    fig=plt.figure()
+    fig.set_figwidth(8)
     plt.plot(y_axis, J_lst)
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Polar Moment of Inertia [m^4]")
@@ -119,4 +123,5 @@ def J_diagram(t: float) -> None:
     plt.show()
 
 if __name__=="__main__":
-    J_diagram(2.4*1e-3)
+    # ixx_diagram(2*1e-3, 4, 0.035**2)
+    ixx_diagram(4*1e-3,0,0)

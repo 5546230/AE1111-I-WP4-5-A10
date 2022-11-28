@@ -67,4 +67,5 @@ def diagram(t: float) -> None:
     plt.show()
 
 if __name__=="__main__":
-    print(get_t())
+    # print(get_t())
+    diagram(2*1e-3)
