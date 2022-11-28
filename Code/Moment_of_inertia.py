@@ -44,20 +44,15 @@ def get_ixx(y: float, t:float) -> float:
     #case 2: t=1 2 stringers (side=35mm)
     #case 3: t=1 4 stringers (side=25mm)
 
-    I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4 + nr_up*A_stringer*(math.tan(beta_1)*l/2+z_centroid)**2 + nr_down*A_stringer*(z_centroid-math.tan(beta_2)*l/2)**2
+    #calculate the total ixx
+    I_xx = I_xx_1 + I_xx_2 + I_xx_3 + I_xx_4 + nr_up*A_stringer*(h-H_2/2*np.sin(beta_1)-z_centroid)**2 + nr_down*A_stringer*(H_1/2*np.sin(beta_2)-z_centroid)**2
     return(I_xx)
 
-# y_axis=np.linspace(0.1,11.98,100)
-# i_xx=[]
-# for y in y_axis:
-#     value= get_ixx(y)
-#     i_xx.append(value)
-# plt.plot(y_axis,i_xx)
-# plt.show()
-def get_zcentroid(y: float, t:float)-> float:
-    
+
+def get_zcentroid(y: float, t: float) -> float:
+    '''returns the z-coordinate for the centroid of the wingbox at location  along the span for a thickness of t'''
     c_r = 3.49 #root chord[m]
-    c = c_r-c_r*(1-0.372)/12*y #formula for chord
+    c = c_r - c_r * (1 - 0.372)/12*y #formula for chord
     # t = 2*10**-3 #thickness
 
     
@@ -70,8 +65,8 @@ def get_zcentroid(y: float, t:float)-> float:
 
     H_1 = 0.5505*c #hyphotenus
     H_2 = 0.55069*c
-    beta_1=math.atan(h_up/l) #top angle
-    beta_2=math.atan(h_2/l) #bottom angle
+    beta_1 = math.atan(h_up/l) #top angle
+    beta_2 = math.atan(h_2/l) #bottom angle
 
     A_1 = h*t 
     A_2 = H_2*t
@@ -97,12 +92,15 @@ def get_J(y: float, t:float) -> float:
 
     return(J)
 
-def diagram(t:float):
+def diagram(t: float) -> None:
+    '''Get the diagram for Ixx as a function of y along the span for a thickness t'''
     y_axis = np.linspace(0,11.98,100)
     ixx_lst=[]
+    #get the ixx for each y location
     for y in y_axis:
         ixx_lst.append(get_ixx(y, t))
 
+    #plot the values
     plt.plot(y_axis, ixx_lst)
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Moment of inertia [m^4]")

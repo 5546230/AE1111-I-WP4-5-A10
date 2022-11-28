@@ -17,15 +17,17 @@ def get_t() -> tuple:
     load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
 
     y_axis = np.linspace(0,11.98,100)
-    t=1.5e-3
+    t = 1.5e-3
 
     #start the iteration
     for iteration in np.arange(99999):
+        #integrate twice to get the deflection
         defl = []
         for y in y_axis:
             defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= (load, t))
             defl.append(defl_val)
 
+        #interpolate to be able to integrate again
         defl_func = sp.interpolate.interp1d(y_axis, defl, kind="linear")
 
         deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
@@ -37,7 +39,8 @@ def get_t() -> tuple:
         #update the thickness
         t*=deflection/-23.5/0.15
 
-def diagram(t:float):
+def diagram(t: float):
+    '''Get a deflection diagram for a thickness of t'''
     defl = []
     y_axis = np.linspace(0,11.98,100)
     load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
