@@ -103,6 +103,8 @@ class LoadCase:
         fig, axs = plt.subplots(3, sharex=True)
 
         fig.suptitle(f"Load case for n = {self.n:.2f}, v = {self.v:.2f} [m/s], W = {self.w:.2f} [N] and h = {self.h:.2f}")
+        fig.set_figheight(8)
+        fig.set_figwidth(7)
 
         axs[0].plot(y_axis, z_shear)
         axs[0].set_title("Shear force diagram")
@@ -120,7 +122,7 @@ if __name__=="__main__":
     # load1_2 = LoadCase(2.62, 16575.6*9.80665, 66.6, 0)
     # load1_3 = LoadCase(2.62, 10328.5*9.80665, 52.57, 0)
     # load2_1 = LoadCase(2.62, 9318.5*9.80665, 117.28, 12500)
-    # load2_2 = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
+    # load2_2 = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
     # load2_3 = LoadCase(2.62, 10328.5*9.80665, 132.47, 12500)
     load3_1 = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
 
@@ -128,5 +130,6 @@ if __name__=="__main__":
     # load1_2.diagram()
     # load1_3.diagram()
     # load2_1.diagram()
+    # load2_2.diagram()
     load3_1.diagram()
     # load2_3.diagram()
