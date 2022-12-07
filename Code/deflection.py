@@ -12,19 +12,20 @@ def get_deflection(y: float, load: LoadCase, t:float, n_stringer: int, A_stringe
     E = 68e9
     return (-moment/(E*ixx))
 
-def get_t() -> tuple:
+def get_t(n_stringer: int, A_stringer: float) -> tuple:
     '''calculate the minimum thickness for the deflection through an iterative process'''
     load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
 
     y_axis = np.linspace(0,11.98,100)
     t = 1.5e-3
-
+    t_lst = [] 
+    defl_lst = []
     #start the iteration
     for iteration in np.arange(99999):
         #integrate twice to get the deflection
         defl = []
         for y in y_axis:
-            defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= (load, t))
+            defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= (load, t, n_stringer, A_stringer))
             defl.append(defl_val)
 
         #interpolate to be able to integrate again
@@ -32,18 +33,23 @@ def get_t() -> tuple:
 
         deflection, _ = sp.integrate.quad(defl_func, 0, 11.98)
 
+        t_lst.append(t)
+        defl_lst.append(deflection)
+
         #check if deflection within limits
         if deflection>=-23.5*0.15 and deflection<=-23.5*0.149:
-            return t, deflection
+            return t, deflection, t_lst, defl_lst
         
         #update the thickness
         t*=deflection/-23.5/0.15
 
-def diagram(t: float, n_stringer: int, A_stringer: float):
+def diagram(t: float, n_stringer: int, A_stringer: float, name: str):
     '''Get a deflection diagram for a thickness of t'''
     defl = []
     y_axis = np.linspace(0,11.98,100)
     load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
+    # load = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
+
 
     for y in y_axis:
         defl_val, _ = sp.integrate.quad(get_deflection, 0, y, args= (load, t, n_stringer, A_stringer))
@@ -55,14 +61,33 @@ def diagram(t: float, n_stringer: int, A_stringer: float):
         deflection, _ = sp.integrate.quad(defl_func, 0, y)
         defl_lst.append(deflection)
     fig = plt.figure()
-    fig.set_figwidth(7)
+    fig.set_figwidth(8)
     plt.plot(y_axis, defl_lst)
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Deflection [m]")
-    plt.title(f"Deflection for a thickness of {t*1e3:.1f} mm, with {n_stringer} stringers of area {A_stringer*1e6:.1f} [mm^2]")
-    plt.show()
+    plt.title(f"Deflection for a thickness of {t*1e3:.1f} [mm], with {n_stringer} stringers of area {A_stringer*1e6:.1f} [mm^2] for n = {load.n:.2f}")
+    plt.xlim(0,12)
+    plt.ylim(None,0)
+    plt.grid()
+    plt.savefig(name, format="svg", transparent = True)
+    plt.cla()
 
 if __name__=="__main__":
-    # t= get_t()    
+    _,_, t_lst, defl_lst = get_t(0,0)
+    iter_lst = np.arange(len(t_lst))
+    print(t_lst, defl_lst)
+    fig, axs = plt.subplots(2, sharex= True)    
+    fig.suptitle("The change of the deflection and thickness for the iterations")
+
+    axs[0].plot(iter_lst, t_lst)
+    axs[0].set_xbound(0, iter_lst[-1])
+    axs[0].set_ylabel("Thickness [mm]")
+
+    axs[1].plot(iter_lst, defl_lst)
+    axs[1].set_ylabel("Deflection [m]")
+    axs[1].set_xlabel("Iteration")
+    plt.show()
     # print(t)
-    diagram(2*1e-3, 4, (35*1e-3)**2)
+    # diagram(4*1e-3, 0,0, "deflection1_1.svg")
+    # diagram(1.5*1e-3, 2, (65*1e-3)**2, "deflection2_1.svg")
+    # diagram(2*1e-3, 4, (35*1e-3)**2, "deflection3_1.svg")

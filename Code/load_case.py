@@ -97,39 +97,59 @@ class LoadCase:
         y_axis = np.linspace(0,11.98,100)
         z_shear = self.z2_shear(y_axis)
         bending_moment = self.z2_moment(y_axis)
-        torque = get_mspan(y_axis, self.alpha, self.v, self.rho)
+        m_span = []
 
 
+        for y in (y_axis):
+            m_span_val, error = sp.integrate.quad(get_mspan, y, 11.98, args = (self.alpha, self.v, self.rho))
+            m_span.append(m_span_val)
+        print(z_shear[0], bending_moment[0], (m_span[0]))
+        # return
         fig, axs = plt.subplots(3, sharex=True)
 
-        fig.suptitle(f"Load case for n = {self.n:.2f}, v = {self.v:.2f} [m/s], W = {self.w:.2f} [N] and h = {self.h:.2f}")
+        fig.suptitle(f"Load case for n = {self.n:.2f}, v = {self.v:.2f} [m/s], W = {self.w:.2f} [N] and h = {self.h:.2f} [m]")
         fig.set_figheight(8)
-        fig.set_figwidth(7)
+        fig.set_figwidth(8)
 
-        axs[0].plot(y_axis, z_shear)
-        axs[0].set_title("Shear force diagram")
+        axs[0].plot(y_axis, z_shear, )
+        # axs[0].set_title("Shear force diagram")
+        axs[0].set_ylabel("Shear force [N]")
+        axs[0].set_xbound(0,12)
+        axs[0].set_ybound(np.min(z_shear)*1.1,np.max(z_shear)*1.1)
+        axs[0].grid(True)
 
         axs[1].plot(y_axis, bending_moment)
-        axs[1].set_title("Bending moment diagram")
+        # axs[1].set_title("Bending moment diagram")
+        axs[1].set_ylabel("Bending moment [Nm]")
+        axs[1].set_xbound(0,12)
+        axs[1].set_ybound(np.min(bending_moment)*1.1,np.max(bending_moment)*1.1)
+        axs[1].grid(True)
 
-        axs[2].plot(y_axis, torque)
-        axs[2].set_title("Torque diagram")
-
-        plt.show()
+        axs[2].plot(y_axis, m_span)
+        # axs[2].set_title("Torque diagram")
+        axs[2].set_ylabel("Torque [Nm]")
+        axs[2].set_xlabel("Spanwise location [m]")
+        axs[2].set_xbound(0,12)
+        axs[2].set_ybound(np.min(m_span)*1.1,np.max(m_span)*1.1*np.max(m_span)>0)
+        axs[2].grid(True)
+        
+        # plt.show()
+        plt.savefig("Positive_load_factor.svg", format="svg", transparent = True)
 
 if __name__=="__main__":
     # load1_1 = LoadCase(2.62, 9318.5*9.80665, 49.94, 0)
     # load1_2 = LoadCase(2.62, 16575.6*9.80665, 66.6, 0)
     # load1_3 = LoadCase(2.62, 10328.5*9.80665, 52.57, 0)
     # load2_1 = LoadCase(2.62, 9318.5*9.80665, 117.28, 12500)
-    # load2_2 = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
+    load2_2 = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
     # load2_3 = LoadCase(2.62, 10328.5*9.80665, 132.47, 12500)
-    load3_1 = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
+    # load3_1 = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
+
 
     # load1_1.diagram()
     # load1_2.diagram()
     # load1_3.diagram()
     # load2_1.diagram()
-    # load2_2.diagram()
-    load3_1.diagram()
+    load2_2.diagram()
+    # load3_1.diagram()
     # load2_3.diagram()

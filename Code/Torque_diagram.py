@@ -24,7 +24,7 @@ def torque_diagram(alpha, v, rho):
 
 
 if __name__=="__main__":
-    alpha = 1/180*np.pi
-    v= 200
-    rho = 0.25
-    torque_diagram(alpha, v, rho)
+    from load_case import LoadCase
+    load = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
+
+    torque_diagram(load.alpha, load.v, load.rho)
