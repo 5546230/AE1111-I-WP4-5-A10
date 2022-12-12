@@ -12,20 +12,21 @@ design_option = str(input("Design option (1, 2 or 3):", ))
 
 #design options parameters (n_stringers, t, ...)
 designs = {
-    "1":dict(t=4, n_stringers=0),
-    "2":dict(t=1.5, n_stringers=2),
-    "3":dict(t=2, n_stringers=4)
+    "1":dict(t = 4, n_stringers = 0, a_stringer = 0),
+    "2":dict(t = 1.5, n_stringers = 2, a_stringer = (65e-3)**2),
+    "3":dict(t = 2, n_stringers = 4, a_stringer = (35e-3)**2)
 }
 
 n_stringers = designs[design_option]["n_stringers"]
 t = designs[design_option]["t"]*1e-3 #m
+a_stringer = designs[design_option]["a_stringer"] #mm^2
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
 def skin_stress(y):
-    sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t, n_stringers) #Pa; flexure formula
+    sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t, n_stringers, a_stringer) #Pa; flexure formula
     return sigma
 
 def av_skin_stress(y1, y2):
