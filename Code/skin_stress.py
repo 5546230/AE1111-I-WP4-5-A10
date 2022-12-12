@@ -32,3 +32,12 @@ def skin_stress(y):
 def av_skin_stress(y1, y2):
     sigma_av = 0.5*(skin_stress(y1)+skin_stress(y2))
     return sigma_av
+
+def ratio(0, y):
+    ratio = []
+    for i in len(0, b/2):
+        y = +1
+        ratio[i] = skin_stress(0)/skin_stress(y[i])
+        ration.append(ratio[i])
+    return ratio
+
