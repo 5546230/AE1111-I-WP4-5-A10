@@ -8,13 +8,17 @@ from interpolation import *
 
 #default is option 1
 design_option = 1
-design_option = int(input("Design option (1, 2 or 3):", ))
+design_option = str(input("Design option (1, 2 or 3):", ))
 
 #design options parameters (n_stringers, t, ...)
-designs = [0, 4, 1, 1.5, 2, 1.5]
+designs = {
+    "1":dict(t=4, n_stringers=0),
+    "2":dict(t=1.5, n_stringers=2),
+    "3":dict(t=2, n_stringers=4)
+}
 
-n_stringers = designs[2*design_option-2]
-t = designs[2*design_option-1]*10**-3 #m
+n_stringers = designs[design_option]["n_stringers"]
+t = designs[design_option]["t"]*1e-3 #m
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
