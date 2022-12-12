@@ -6,6 +6,9 @@ from interpolation import *
 
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
+#wingspan
+b = 24
+
 #default is option 1
 design_option = 1
 design_option = str(input("Design option (1, 2 or 3):", ))
@@ -33,11 +36,12 @@ def av_skin_stress(y1, y2):
     sigma_av = 0.5*(skin_stress(y1)+skin_stress(y2))
     return sigma_av
 
-def ratio(0, y):
+def ratio():
     ratio = []
-    for i in len(0, b/2):
-        y = +1
-        ratio[i] = skin_stress(0)/skin_stress(y[i])
-        ration.append(ratio[i])
+    for i in range(5, int(b/2)+1):
+        r = skin_stress(5)/skin_stress(i+1)
+        ratio.append(r)
     return ratio
 
+#a = ratio()
+#print(a)
