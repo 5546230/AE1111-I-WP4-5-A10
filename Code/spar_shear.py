@@ -158,7 +158,7 @@ def mos_plot(front):
     for y in y_axis:
         mos = get_mos(y, load, front)
         lst.append(mos)
-
+    print(np.min(lst), np.max(lst))
     #plot the values
     plt.plot(y_axis, lst)
     plt.yscale('log')
@@ -220,5 +220,5 @@ def ks_compare_plot(front: bool):
 if __name__ == "__main__":
     mos_plot(1)
     mos_plot(0)
-    ks_compare_plot(1)
-    ks_compare_plot(0)
+    # ks_compare_plot(1)
+    # ks_compare_plot(0)
