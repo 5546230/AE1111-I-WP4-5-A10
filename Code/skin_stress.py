@@ -45,3 +45,6 @@ def ratio():
 
 #a = ratio()
 #print(a)
+
+s = skin_stress(0)
+print(s)
