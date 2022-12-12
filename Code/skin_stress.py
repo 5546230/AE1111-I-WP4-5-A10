@@ -22,7 +22,7 @@ designs = {
 
 n_stringers = designs[design_option]["n_stringers"]
 t = designs[design_option]["t"]*1e-3 #m
-a_stringer = designs[design_option]["a_stringer"] #mm^2
+a_stringer = designs[design_option]["a_stringer"] #m^2
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
@@ -42,6 +42,10 @@ def ratio():
         r = skin_stress(5)/skin_stress(i+1)
         ratio.append(r)
     return ratio
+
+print(get_ixx(0,t,n_stringers,a_stringer))
+print(load_max_compr.z2_moment(0))
+print(get_c(0))
 
 #a = ratio()
 #print(a)
