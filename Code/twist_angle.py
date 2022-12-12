@@ -10,14 +10,14 @@ def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
     '''the relation between the twist angle, polar moment of inertia and the torque'''
 
     #get the pitching moment
-    torque = get_mspan(y, load.alpha+alpha, load.v, load.rho)
+    torque = load.torque(y)
 
     #include the torque created by the vertical forces on the wingbox
     lift = -load.z2_force(y, load.alpha+alpha)
     c = 3.49-3.49*(1-0.372)/12*y
 
-    #include a safety factor
-    torque_tot = (torque - lift * 0.3*c) 
+    
+    torque_tot = (torque)# - lift * 0.3*c) 
 
     J = get_J(y, t)
     G = 68e9*3/8

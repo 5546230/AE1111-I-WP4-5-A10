@@ -26,10 +26,12 @@ class LoadCase:
 
         #get mometn functions
         self.z2_moment_calc()
-    
+
+        self.torque_calc()
+        
     def z2_force(self, y: float, alpha=0) -> float:
         '''get the forces in the z direction of the wingbox at a location y along the span'''
-        return -(get_Lspan(y, self.alpha+alpha, self.v, self.rho) - get_Weight(y))*np.cos(self.alpha+alpha)- get_dispan(y, self.alpha+alpha, self.v, self.rho)*np.sin(self.alpha+alpha)
+        return -(get_Lspan(y, self.alpha+alpha, self.v, self.rho) - get_Weight(y)*self.n)*np.cos(self.alpha+alpha)- get_dispan(y, self.alpha+alpha, self.v, self.rho)*np.sin(self.alpha+alpha)
     
 
     def z2_shear_calc(self)->None:
@@ -88,6 +90,16 @@ class LoadCase:
         plt.title("Moment in z-axis diagram")
         plt.show()
 
+    def torque_calc(self)->None:
+        y_axis = np.linspace(0,11.98, 100)
+        torque = []
+        for y in y_axis:
+            torque_val, _= sp.integrate.quad(get_mspan, y, 11.98, args=(self.alpha, self.v, self.rho))
+            torque.append(torque_val)
+        
+        self.torque = sp.interpolate.interp1d(y_axis, torque, kind="linear", fill_value="extrapolate")
+
+
     def torque_diagram(self)-> None:
         '''generates the torque diagram'''
         torque_diagram(self.alpha, self.v, self.rho)
@@ -103,8 +115,7 @@ class LoadCase:
         for y in (y_axis):
             m_span_val, error = sp.integrate.quad(get_mspan, y, 11.98, args = (self.alpha, self.v, self.rho))
             m_span.append(m_span_val)
-        print(z_shear[0], bending_moment[0], (m_span[0]))
-        # return
+
         fig, axs = plt.subplots(3, sharex=True)
 
         fig.suptitle(f"Load case for n = {self.n:.2f}, v = {self.v:.2f} [m/s], W = {self.w:.2f} [N] and h = {self.h:.2f} [m]")
