@@ -7,7 +7,9 @@ from interpolation import *
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
 #wingspan
-b = 24
+b = 24 #m
+E = 68e9 #Pa
+nu = 0.33 #-
 
 #default is option 1
 design_option = 1
@@ -21,15 +23,20 @@ designs = {
 }
 
 n_stringers = designs[design_option]["n_stringers"]
+n_u = n_stringers//2
 t = designs[design_option]["t"]*1e-3 #m
 a_stringer = designs[design_option]["a_stringer"] #m^2
+
+#Manual t input - leave it like this
+t = 0.0063
+#
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
 def skin_stress(y):
-    sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t, n_stringers, a_stringer) #Pa; flexure formula
+    sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t, n_stringers, 3*a_stringer) #Pa; flexure formula #On purpose 3*
     return sigma
 
 def av_skin_stress(y1, y2):
@@ -43,12 +50,31 @@ def ratio():
         ratio.append(r)
     return ratio
 
-print(get_ixx(0,t,n_stringers,a_stringer))
-print(load_max_compr.z2_moment(0))
-print(get_c(0))
+def stress_crit(y1, y2):
+    slenderness = ((n_u+1)*(y2-y1))/(get_c(y1)) #a over b
+    K = 0.0364*(slenderness)**2 - 0.3815*(slenderness) + 4.2206 #for linearly varying moment
+    sigma_crit = ((t**2*E*np.pi**2)/(12*(1-nu**2)))*(((n_u+1)/(get_c(y1)))**2)
+    return sigma_crit
 
-#a = ratio()
-#print(a)
+sigma_yield = 271*10**6
+#s = skin_stress(0)
+#print(s)
 
-s = skin_stress(0)
-print(s)
+#while s > sigma_yield:
+#    t += 0.0001
+#    s = skin_stress(0)
+
+#print(t)
+#print(s)
+
+#Rib placement
+dy = 0.1 #m
+y1 = 0 #m
+y2 = y1 + dy #m
+
+s = skin_stress(y2)
+s_crit = stress_crit(y1, y2)
+
+#while s > s_crit:
+
+#Work in progress
