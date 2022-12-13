@@ -11,15 +11,15 @@ b = 24 #m
 E = 68e9 #Pa
 nu = 0.33 #-
 
-#default is option 1
-design_option = 1
-design_option = str(input("Design option (1, 2 or 3):", ))
+#default is option 3
+design_option = 3
+#design_option = str(input("Design option (1, 2 or 3):", ))
 
 #design options parameters (n_stringers, t, ...)
 designs = {
     "1":dict(t = 4, n_stringers = 0, a_stringer = 0),
     "2":dict(t = 1.5, n_stringers = 2, a_stringer = (65e-3)**2),
-    "3":dict(t = 2, n_stringers = 12, a_stringer = (35e-3)**2)
+    "3":dict(t = 2, n_stringers = 14, a_stringer = (35e-3)**2)
 }
 
 n_stringers = designs[design_option]["n_stringers"]
@@ -28,7 +28,7 @@ t = designs[design_option]["t"]*1e-3 #m
 a_stringer = designs[design_option]["a_stringer"] #m^2
 
 #stringer area multiplier
-m = 0.4 # < 1 makes much more sense
+m = 0.3 # < 1 makes much more sense
 
 #Manual t input - leave it like this
 #t = 0.007 #m
