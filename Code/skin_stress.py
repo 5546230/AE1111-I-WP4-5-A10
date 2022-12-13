@@ -19,7 +19,7 @@ design_option = str(input("Design option (1, 2 or 3):", ))
 designs = {
     "1":dict(t = 4, n_stringers = 0, a_stringer = 0),
     "2":dict(t = 1.5, n_stringers = 2, a_stringer = (65e-3)**2),
-    "3":dict(t = 2, n_stringers = 10, a_stringer = (35e-3)**2)
+    "3":dict(t = 2, n_stringers = 12, a_stringer = (35e-3)**2)
 }
 
 n_stringers = designs[design_option]["n_stringers"]
@@ -27,17 +27,17 @@ n_u = n_stringers//2
 t = designs[design_option]["t"]*1e-3 #m
 a_stringer = designs[design_option]["a_stringer"] #m^2
 
-#assumed stringer thickness just for the sake of understanding what is going on. Has nothing to do with actual stringer thickness
-t_stringer = 0.003 #m
-# calculated stringer side length (approx.) for similar reasons as above
-a = (a_stringer/(2*t_stringer)) * 10**3 #mm
+#stringer area multiplier
+m = 0.4 # < 1 makes much more sense
 
 #Manual t input - leave it like this
-#t = 0.0063 #t required for design case 3 to have stresses below yield strength at root
+#t = 0.007 #m
 #
 
-#stringer area multiplier
-m = 1
+#assumed stringer thickness just for the sake of understanding what is going on. Has nothing to do with actual stringer thickness
+t_stringer = 0.005 #m
+# calculated stringer side length (approx.) for similar reasons as above
+a = (m*a_stringer/(2*t_stringer)) * 10**3 #mm
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
@@ -75,9 +75,6 @@ while s > sigma_yield:
     #print(get_ixx(0, t, n_stringers, m*a_stringer))
     s = skin_stress(0, t, a_stringer)
 
-print("\n", "ITERATED thickness", t)
-#print("270 000 000 >", s)
-print("mass/unit length", n_stringers*a_stringer+1.101*get_c(0)*t, "\n")
 ##########
 
 ########## Rib placement ##########
@@ -114,7 +111,11 @@ while y2 < b/2:
 
 print("\n", "Number of ribs: ", n_rib)
 
-print("\n", "a = ", a, " mm")
+print("\n", "a = ", round(a, 3), " mm")
+
+print("\n", "ITERATED thickness", round(t*10**3, 3), " mm")
+#print("270 000 000 >", s)
+print("Vol/unit length", n_stringers*a_stringer+1.101*get_c(0)*t, "\n")
 
 
 #Work in progress
