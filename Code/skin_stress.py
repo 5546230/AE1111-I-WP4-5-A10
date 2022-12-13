@@ -12,7 +12,7 @@ E = 68e9 #Pa
 nu = 0.33 #-
 
 #default is option 3
-design_option = 3
+design_option = str(3)
 #design_option = str(input("Design option (1, 2 or 3):", ))
 
 #design options parameters (n_stringers, t, ...)
@@ -28,10 +28,10 @@ t = designs[design_option]["t"]*1e-3 #m
 a_stringer = designs[design_option]["a_stringer"] #m^2
 
 #stringer area multiplier
-m = 0.3 # < 1 makes much more sense
+m = 0.5 # < 1 makes much more sense
 
 #Manual t input - leave it like this
-#t = 0.007 #m
+t = 0.008 #m
 #
 
 #assumed stringer thickness just for the sake of understanding what is going on. Has nothing to do with actual stringer thickness
@@ -66,6 +66,7 @@ def stress_crit(y1, y2, t):
 
 
 ######### thickness iteration ##########
+# iterates on thickness if needed
 sigma_yield = 271*10**6
 s = skin_stress(0, t, a_stringer)
 #print(s)
@@ -113,7 +114,7 @@ print("\n", "Number of ribs: ", n_rib)
 
 print("\n", "a = ", round(a, 3), " mm")
 
-print("\n", "ITERATED thickness", round(t*10**3, 3), " mm")
+print("\n", "thickness", round(t*10**3, 3), " mm")
 #print("270 000 000 >", s)
 print("Vol/unit length", n_stringers*a_stringer+1.101*get_c(0)*t, "\n")
 
