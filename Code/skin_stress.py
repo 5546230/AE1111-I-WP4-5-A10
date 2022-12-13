@@ -27,12 +27,17 @@ n_u = n_stringers//2
 t = designs[design_option]["t"]*1e-3 #m
 a_stringer = designs[design_option]["a_stringer"] #m^2
 
+#assumed stringer thickness just for the sake of understanding what is going on. Has nothing to do with actual stringer thickness
+t_stringer = 0.003 #m
+# calculated stringer side length (approx.) for similar reasons as above
+a = (a_stringer/(2*t_stringer)) * 10**3 #mm
+
 #Manual t input - leave it like this
 #t = 0.0063 #t required for design case 3 to have stresses below yield strength at root
 #
 
-#stringer total area multiplier
-m = 3
+#stringer area multiplier
+m = 1
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
@@ -72,11 +77,11 @@ while s > sigma_yield:
 
 print("\n", "ITERATED thickness", t)
 #print("270 000 000 >", s)
-print("mass/unit length", a_stringer+1.101*get_c(0)*t, "\n")
+print("mass/unit length", n_stringers*a_stringer+1.101*get_c(0)*t, "\n")
 ##########
 
 ########## Rib placement ##########
-# iterated thickness and total stringer area carries through
+# iterated thickness and stringer area carries through
 
 dy = 0.1 #m
 y1 = 0 #m
@@ -108,6 +113,8 @@ while y2 < b/2:
         s_crit = stress_crit(y1, y2, t)[0]
 
 print("\n", "Number of ribs: ", n_rib)
+
+print("\n", "a = ", a, " mm")
 
 
 #Work in progress
