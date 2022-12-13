@@ -19,7 +19,7 @@ design_option = str(input("Design option (1, 2 or 3):", ))
 designs = {
     "1":dict(t = 4, n_stringers = 0, a_stringer = 0),
     "2":dict(t = 1.5, n_stringers = 2, a_stringer = (65e-3)**2),
-    "3":dict(t = 2, n_stringers = 8, a_stringer = (35e-3)**2)
+    "3":dict(t = 2, n_stringers = 10, a_stringer = (35e-3)**2)
 }
 
 n_stringers = designs[design_option]["n_stringers"]
@@ -32,7 +32,7 @@ a_stringer = designs[design_option]["a_stringer"] #m^2
 #
 
 #stringer total area multiplier
-m = 2
+m = 3
 
 #load case for maximum compression in upper skin panels
 load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
@@ -46,7 +46,7 @@ def av_skin_stress(y1, y2, t, a_stringer):
     sigma_av = 0.5*(skin_stress(y1, t, a_stringer)+skin_stress(y2, t, a_stringer))
     return sigma_av
 
-def ratio():
+#def ratio():
     ratio = []
     for i in range(5, int(b/2)+1):
         r = skin_stress(5)/skin_stress(i+1)
@@ -71,38 +71,43 @@ while s > sigma_yield:
     s = skin_stress(0, t, a_stringer)
 
 print("\n", "ITERATED thickness", t)
-print("270 000 000 >", s)
+#print("270 000 000 >", s)
 print("mass/unit length", a_stringer+1.101*get_c(0)*t, "\n")
 ##########
 
 ########## Rib placement ##########
 # iterated thickness and total stringer area carries through
 
-dy = 0.01 #m
+dy = 0.1 #m
 y1 = 0 #m
 y2 = y1 + dy #m
 
 s_av = av_skin_stress(y1, y2, t, a_stringer)
 s_crit, K = stress_crit(y1, y2, t)
 
-#print(s_av*10**-6)
-print(stress_crit(y1, y2, t)[0]*10**-6, "\n", K, "\n")
+n_rib = 0
 
-while y2 < 2:
+#print(s_av*10**-6)
+#print(stress_crit(y1, y2, t)[0]*10**-6, "\n", K, "\n")
+
+while y2 < b/2:
     if s_av < s_crit:
-        print("Average stress ", int(s_av*10**-6), "\n")
-        print("Critical sress", int(s_crit*10**-6), "\n")
+        #print("Average stress ", int(s_av*10**-6), "\n")
+        #print("Critical sress", int(s_crit*10**-6), "\n")
         y2 += dy
         s_av = av_skin_stress(y1, y2, t, a_stringer)
         s_crit = stress_crit(y1, y2, t)[0]
     else:
-        print("Average stress ", int(s_av*10**-6), "\n")
-        print("Critical sress", int(s_crit*10**-6), "\n")
+        print("\n", "Average stress ", int(s_av*10**-6),)
+        print("Critical sress", int(s_crit*10**-6),)
         print("Rib at ", round(y2, 3), " m spanwise")
+        n_rib += 1
         y1 = y2
         y2 = y1 + dy
         s_av = av_skin_stress(y1, y2, t, a_stringer)
         s_crit = stress_crit(y1, y2, t)[0]
+
+print("\n", "Number of ribs: ", n_rib)
 
 
 #Work in progress
