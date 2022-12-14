@@ -25,7 +25,13 @@ def main():
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Weight [N]")
     plt.show()
+#new function
+def get_mass(y):
+    A_root = 1.094
+    weight = 756*9.80665
+    lamda = 0.372
+    volume = 6.613 
+    return (1/9.80665)*A_root*((lamda-1)/12*y+1)**2*weight/volume
 
 if __name__=="__main__":
     main()
-    
