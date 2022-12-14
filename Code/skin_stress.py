@@ -8,12 +8,12 @@ from Weight_diagram import get_Weight, fuel_weight
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
-def skin_stress(y, t, a_stringer):
-    sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t_f*10**-3, t_r*10**-3, t, n_stringers, m*a_stringer) #Pa; flexure formula #On purpose 3*
+def skin_stress(y, t_f, t_r, t, a_stringer):
+    sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t_f, t_r, t, n_stringers, m*a_stringer) #Pa; flexure formula #On purpose 3*
     return sigma
 
-def av_skin_stress(y1, y2, t, a_stringer):
-    sigma_av = 0.5*(skin_stress(y1, t, a_stringer)+skin_stress(y2, t, a_stringer))
+def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer):
+    sigma_av = 0.5*(skin_stress(y1, t_f, t_r, t, a_stringer)+skin_stress(y2, t_f, t_r, t, a_stringer))
     return sigma_av
 
 #def ratio():
@@ -68,8 +68,8 @@ if __name__=="__main__":
     #t = designs[design_option]["t"]*1e-3 #m
     a_stringer = designs[design_option]["a_stringer"] #m^2
 
-    t_f = 5.5 #mm
-    t_r = 4 #mm
+    t_f = 5.5*10**-3 #mm
+    t_r = 4*10**-3 #mm
 
     #assumed stringer thickness just for the sake of understanding what is going on. Has nothing to do with actual stringer thickness
     t_stringer = 0.005 #m
