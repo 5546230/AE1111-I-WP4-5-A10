@@ -8,12 +8,12 @@ from Weight_diagram import get_Weight, fuel_weight
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
-def skin_stress(y, t_f, t_r, t, a_stringer, n_stringers):
+def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m):
     sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t_f, t_r, t, n_stringers, m*a_stringer) #Pa; flexure formula #On purpose 3*
     return sigma
 
-def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n_stringers):
-    sigma_av = 0.5*(skin_stress(y1, t_f, t_r, t, a_stringer, n_stringers)+skin_stress(y2, t_f, t_r, t, a_stringer, n_stringers))
+def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n_stringers, m):
+    sigma_av = 0.5*(skin_stress(y1, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m)+skin_stress(y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m))
     return sigma_av
 
 #def ratio():
@@ -30,7 +30,8 @@ def stress_crit(y1, y2, t, n_u):
     return sigma_crit, K
 
 def mass_remaining(y_0):
-    m_r = (1/9.80665)*sp.integrate.quad(get_Weight-fuel_weight, y_0, 12)[0]
+    m_r = sp.integrate.quad(get_Weight, y_0, 12)[0]
+    m_r = (1/9.80665)*m_r
     return m_r
 
 if __name__=="__main__":
@@ -50,11 +51,7 @@ if __name__=="__main__":
     iterated = False
 
     # OUTPUT
-    output = np.array()
-    ind_out= [[], #n
-    [],  #m
-    [],  #t
-    []]  #mass/length
+    output = np.array([["n", "m", "t", "mass"]])
 
     #design options parameters (n_stringers, t, ...)
     designs = {
@@ -74,7 +71,7 @@ if __name__=="__main__":
     #assumed stringer thickness just for the sake of understanding what is going on. Has nothing to do with actual stringer thickness
     t_stringer = 0.005 #m
     # calculated stringer side length (approx.) for similar reasons as above
-    a = (m*a_stringer/(2*t_stringer)) * 10**3 #mm
+    a = (m0*a_stringer/(2*t_stringer)) * 10**3 #mm
 
     #load case for maximum compression in upper skin panels
     load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
@@ -82,47 +79,49 @@ if __name__=="__main__":
     ######### thickness iteration ##########
     # iterates on thickness if needed
     sigma_yield = 271*10**6
-    s = skin_stress(0, t, a_stringer)
+    s = skin_stress(0, t_f, t_r, t0, a_stringer, load_max_compr, n, m0)
     #print(s)
 
     while s > sigma_yield:
         iterated = True
-        t += 0.0001
+        t0 += 0.0001
         #print(get_ixx(0, t, n_stringers, m*a_stringer))
-        s = skin_stress(0, t, a_stringer)
+        s = skin_stress(0, t_f, t_r, t0, a_stringer, load_max_compr, n, m0)
 
     ##########
 
     ########## Rib placement ##########
     # iterated thickness and stringer area carries through
-    dt = 0.0001
-    dm = 0.01
+    dt = 0.001
+    dm = 0.1
     dy = 0.1 #m
 
     #t is set
+    t = t0
     #n is set
     #m starts from 0.1
+    m = m0
     y1 = 0 #m
     y2 = y1 + dy #m
 
-    s_av = av_skin_stress(y1, y2, t, a_stringer)
-    s_crit, K = stress_crit(y1, y2, t)
+    #s_av = av_skin_stress(y1, y2, t0, a_stringer)
+    #s_crit, K = stress_crit(y1, y2, t0)
 
     n_rib = 0
 
-    #print(s_av*10**-6)
-    #print(stress_crit(y1, y2, t)[0]*10**-6, "\n", K, "\n")
+    s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n, m0)
+    s_crit = stress_crit(y1, y2, t, n_u)[0]
 
-    for n in range(4,22, 2):
-        while m < 1.5:
-            while t < 0.02:
+    for n in range(4,6, 2):
+        while m < 0.2:
+            while t < 0.05:
                 while y2 < b/4:
                     n_u = n//2
                     if s_av < s_crit:
                         #print("Average stress ", int(s_av*10**-6), "\n")
                         #print("Critical sress", int(s_crit*10**-6), "\n")
                         y2 += dy
-                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n)
+                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     else: #Places a rib
                         #print("\n", "Average stress ", int(s_av*10**-6),)
@@ -131,12 +130,12 @@ if __name__=="__main__":
                         n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
-                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n)
+                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
                         mass = mass_remaining(y1)
                         ind_out = np.array([n, m, t, mass])
-                        np.append(output, ind_out)
+                        output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = 0 #m
                         y2 = y1 + dy #m
@@ -145,12 +144,14 @@ if __name__=="__main__":
             m += dm
             t = t0
         m = m0
+    
+    print(output)
 
-    print("\n", "Number of ribs: ", n_rib)
+    #print("\n", "Number of ribs: ", n_rib)
 
-    print("\n", "a = ", round(a, 3), " mm")
+    #print("\n", "a = ", round(a, 3), " mm")
 
-    print("\n", "thickness", round(t*10**3, 3), " mm")
+    #print("\n", "thickness", round(t*10**3, 3), " mm")
     #print("270 000 000 >", s)
     #print("mass/unit length", 2700*(n_stringers*a_stringer+1.101*get_c(0)*t), "\n")
 
