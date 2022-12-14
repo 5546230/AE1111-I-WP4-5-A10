@@ -8,7 +8,7 @@ from Weight_diagram import get_Weight, fuel_weight
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
-def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers):
+def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m):
     sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t_f, t_r, t, n_stringers, m*a_stringer) #Pa; flexure formula #On purpose 3*
     return sigma
 
