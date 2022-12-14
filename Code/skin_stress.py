@@ -30,7 +30,7 @@ def stress_crit(y1, y2, t, n_u):
     return sigma_crit, K
 
 def mass_remaining(y_0):
-    m_r = sp.integrate.quad(get_Weight-fuel_weight, y_0, 12)[0]
+    m_r = (1/9.80665)*sp.integrate.quad(get_Weight-fuel_weight, y_0, 12)[0]
     return m_r
 
 if __name__=="__main__":
@@ -124,17 +124,19 @@ if __name__=="__main__":
                         y2 += dy
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
-                    else:
-                        print("\n", "Average stress ", int(s_av*10**-6),)
-                        print("Critical sress", int(s_crit*10**-6),)
-                        print("Rib at ", round(y2, 3), " m spanwise")
+                    else: #Places a rib
+                        #print("\n", "Average stress ", int(s_av*10**-6),)
+                        #print("Critical sress", int(s_crit*10**-6),)
+                        #print("Rib at ", round(y2, 3), " m spanwise")
                         n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
-                        ind_out = np.array()
+                        mass = mass_remaining(y1)
+                        ind_out = np.array([n, m, t, mass])
+                        np.append(output, ind_out)
                         n_rib = 0
                         y1 = 0 #m
                         y2 = y1 + dy #m
