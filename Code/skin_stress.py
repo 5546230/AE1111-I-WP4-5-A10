@@ -8,12 +8,12 @@ from Weight_diagram import get_Weight, fuel_weight
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
-def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m):
+def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers,m):
     sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t_f, t_r, t, n_stringers, m*a_stringer) #Pa; flexure formula #On purpose 3*
     return sigma
 
-def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer):
-    sigma_av = 0.5*(skin_stress(y1, t_f, t_r, t, a_stringer)+skin_stress(y2, t_f, t_r, t, a_stringer))
+def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n_stringers):
+    sigma_av = 0.5*(skin_stress(y1, t_f, t_r, t, a_stringer, n_stringers)+skin_stress(y2, t_f, t_r, t, a_stringer, n_stringers))
     return sigma_av
 
 #def ratio():
@@ -23,14 +23,14 @@ def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer):
         ratio.append(r)
     return ratio
 
-def stress_crit(y1, y2, t):
+def stress_crit(y1, y2, t, n_u):
     slenderness = ((n_u+1)*(y2-y1))/(0.55*get_c(y1)) #a over b
     K = 0.0364*(slenderness)**2 - 0.3815*(slenderness) + 4.2206 #for linearly varying moment
     sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( ((n_u+1) / (0.55*get_c(y1)))**2 ) * K
     return sigma_crit, K
 
 def mass_remaining(y_0):
-    m_r = sp.integrate.quad(get_Weight-fuel_weight, y_0, 12)[0]
+    m_r = (1/9.80665)*sp.integrate.quad(get_Weight-fuel_weight, y_0, 12)[0]
     return m_r
 
 if __name__=="__main__":
@@ -45,8 +45,8 @@ if __name__=="__main__":
 
     # INPUT
     n = 4
-    m = 0.1 # < 1 makes much more sense
-    t = 0.004 #m
+    m0 = 0.1 # < 1 makes much more sense
+    t0 = 0.004 #m
     iterated = False
 
     # OUTPUT
@@ -95,8 +95,13 @@ if __name__=="__main__":
 
     ########## Rib placement ##########
     # iterated thickness and stringer area carries through
-
+    dt = 0.0001
+    dm = 0.01
     dy = 0.1 #m
+
+    #t is set
+    #n is set
+    #m starts from 0.1
     y1 = 0 #m
     y2 = y1 + dy #m
 
@@ -112,21 +117,34 @@ if __name__=="__main__":
         while m < 1.5:
             while t < 0.02:
                 while y2 < b/4:
+                    n_u = n//2
                     if s_av < s_crit:
                         #print("Average stress ", int(s_av*10**-6), "\n")
                         #print("Critical sress", int(s_crit*10**-6), "\n")
                         y2 += dy
-                        s_av = av_skin_stress(y1, y2, t, a_stringer)
-                        s_crit = stress_crit(y1, y2, t)[0]
-                    else:
-                        print("\n", "Average stress ", int(s_av*10**-6),)
-                        print("Critical sress", int(s_crit*10**-6),)
-                        print("Rib at ", round(y2, 3), " m spanwise")
+                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n)
+                        s_crit = stress_crit(y1, y2, t, n_u)[0]
+                    else: #Places a rib
+                        #print("\n", "Average stress ", int(s_av*10**-6),)
+                        #print("Critical sress", int(s_crit*10**-6),)
+                        #print("Rib at ", round(y2, 3), " m spanwise")
                         n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
-                        s_av = av_skin_stress(y1, y2, t, a_stringer)
-                        s_crit = stress_crit(y1, y2, t)[0]
+                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n)
+                        s_crit = stress_crit(y1, y2, t, n_u)[0]
+                    if n_rib == 2:
+                        mass = mass_remaining(y1)
+                        ind_out = np.array([n, m, t, mass])
+                        np.append(output, ind_out)
+                        n_rib = 0
+                        y1 = 0 #m
+                        y2 = y1 + dy #m
+                        break
+                t += dt
+            m += dm
+            t = t0
+        m = m0
 
     print("\n", "Number of ribs: ", n_rib)
 
