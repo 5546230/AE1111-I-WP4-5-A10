@@ -3,7 +3,7 @@ import scipy as sp
 from Moment_of_inertia import get_ixx
 from load_case import LoadCase
 from interpolation import *
-from Weight_diagram import get_Weight, fuel_weight
+from Weight_diagram import get_mass
 
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 
@@ -30,7 +30,7 @@ def stress_crit(y1, y2, t, n_u):
     return sigma_crit, K
 
 def mass_remaining(y_0):
-    m_r = sp.integrate.quad(get_Weight, y_0, 12)[0]
+    m_r = sp.integrate.quad(get_mass, y_0, 12)[0]
     m_r = (1/9.80665)*m_r
     return m_r
 
@@ -51,7 +51,7 @@ if __name__=="__main__":
     iterated = False
 
     # OUTPUT
-    output = np.array([["n", "m", "t", "mass"]])
+    output = np.array([["n", "m", "t [mm]", "mass [kg]"]])
 
     #design options parameters (n_stringers, t, ...)
     designs = {
@@ -134,7 +134,7 @@ if __name__=="__main__":
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
                         mass = mass_remaining(y1)
-                        ind_out = np.array([n, m, t, mass])
+                        ind_out = np.array([[n, m, round(t*10**3, 3), mass]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = 0 #m
