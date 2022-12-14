@@ -2,21 +2,12 @@ import scipy as sp
 import numpy as np
 from matplotlib import pyplot as plt
 
-def spar_weight_025(y):
-    w = 2700*0.114*3.5*(1-(1-0.372)*(y/11.98))*9.81*t
-    return w 
-
-def spar_weight_075(y):
-    w = 2700*0.063*3.5*(1-(1-0.372)*(y/11.98))*9.81*t
-    return w 
-
 def fuel_weight(y):
     w = 9.81*0.04425*3.5**2*804*(1-(1-0.372)*(y/11.98))**2
     return w
 
 
 def get_Weight(y):
-    t = 0.01
     A_root = 1.094
     weight = 756*9.80665
     lamda = 0.372
