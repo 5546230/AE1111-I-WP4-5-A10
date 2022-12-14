@@ -12,7 +12,7 @@ def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m):
     sigma = load_max_compr.z2_moment(y)*(0.5*0.114)*get_c(y)/get_ixx(y, t_f, t_r, t, n_stringers, m*a_stringer) #Pa; flexure formula #On purpose 3*
     return sigma
 
-def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n_stringers, m):
+def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m):
     sigma_av = 0.5*(skin_stress(y1, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m)+skin_stress(y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m))
     return sigma_av
 
@@ -109,7 +109,7 @@ if __name__=="__main__":
 
     n_rib = 0
 
-    s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n, m0)
+    s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1, y2, t, n_u)[0]
 
     for n in range(4,6, 2):
@@ -121,7 +121,7 @@ if __name__=="__main__":
                         #print("Average stress ", int(s_av*10**-6), "\n")
                         #print("Critical sress", int(s_crit*10**-6), "\n")
                         y2 += dy
-                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n, m)
+                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     else: #Places a rib
                         #print("\n", "Average stress ", int(s_av*10**-6),)
@@ -130,7 +130,7 @@ if __name__=="__main__":
                         n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
-                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, n, m)
+                        s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
                         mass = mass_remaining(y1)
