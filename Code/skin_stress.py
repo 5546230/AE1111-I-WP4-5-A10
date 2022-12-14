@@ -46,7 +46,7 @@ if __name__=="__main__":
     # INPUT
     n = 4
     m = 0.1 # < 1 makes much more sense
-    t = 0.004 #m
+    t0 = 0.004 #m
     iterated = False
 
     # OUTPUT
@@ -95,8 +95,13 @@ if __name__=="__main__":
 
     ########## Rib placement ##########
     # iterated thickness and stringer area carries through
-
+    dt = 0.0001
+    dm = 0.01
     dy = 0.1 #m
+
+    #t is set
+    #n is set
+    #m starts from 0.1
     y1 = 0 #m
     y2 = y1 + dy #m
 
@@ -127,6 +132,14 @@ if __name__=="__main__":
                         y2 = y1 + dy
                         s_av = av_skin_stress(y1, y2, t, a_stringer)
                         s_crit = stress_crit(y1, y2, t)[0]
+                    if n_rib == 2:
+                        n_rib = 0
+                        y1 = 0 #m
+                        y2 = y1 + dy #m
+                        break
+                t += dt
+            m += dm
+            t = t0
 
     print("\n", "Number of ribs: ", n_rib)
 
