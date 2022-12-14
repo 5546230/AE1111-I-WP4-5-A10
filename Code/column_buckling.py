@@ -52,6 +52,8 @@ class design_option_column:
         #find the lengths
         while y<12:
             stress = skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1)
+            if not y:
+                print(stress)
             length = np.sqrt(k * np.pi**2*e*self.a**2 / (6*stress))
             rib_lengths.append(length)
 
