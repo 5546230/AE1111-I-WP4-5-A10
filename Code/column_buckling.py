@@ -6,7 +6,8 @@ from scipy import interpolate
 from load_case import LoadCase
 
 class design_option_column:
-    def __init__(self, a_stringer: float, n_stringers: float, a_t: float, lengths: list, t_s: float, t_f: float, t_r: float):
+    '''a class for column buckling of the stringers for a design option'''
+    def __init__(self, a_stringer: float, n_stringers: int, a_t: float, lengths: list, t_s: float, t_f: float, t_r: float):
         #define the variables
         self.a_stringer = a_stringer
         self.n_stringers = n_stringers
@@ -15,6 +16,8 @@ class design_option_column:
         self.t_f = t_f
         self.t_r = t_r
         self.load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
+
+        #check if lengths were specified
         if lengths == None:
             self.lengths = self.calc_lengths()
         else:
@@ -37,11 +40,12 @@ class design_option_column:
         self.critical_stress = sp.interpolate.interp1d(self.ribs, crit_stress, kind = "next", fill_value="extrapolate")
 
     def calc_lengths(self) -> list:
+        '''calculates the required lengths of the stringers'''
         #define the variables
         k = 4
         e = 68e9
 
-        #calculate the length of each rib
+        #initialize the variables
         rib_lengths = []
         y = 0
 
@@ -50,11 +54,14 @@ class design_option_column:
             stress = skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1)
             length = np.sqrt(k * np.pi**2*e*self.a**2 / (6*stress))
             rib_lengths.append(length)
+
+            #update the y coordinate
             y+=length
 
         return np.array(rib_lengths)
 
     def crit_stress(self) -> float:
+        '''calculates the critical stress'''
         #define the variables
         k = 4
         e = 68e9
@@ -66,13 +73,23 @@ class design_option_column:
         return crit_stress
     
     def generate_plot(self):
+        '''generates the plot of the margin of safety for column buckling'''
+        #define the y-axis
         y_axis = np.linspace(0,12,100)
+
+        #calculate the critical stress
         critical = self.critical_stress(y_axis)
+
+        #calculate the actual stress at each y location
         actual = []
         for y in y_axis:
             actual.append(skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1))
         actual = np.array(actual)
+
+        #calculate the factor
         factor = critical/actual
+
+        #plot the values
         plt.plot(y_axis, factor)
         plt.yscale("log")
         plt.xlim(0,12)
@@ -80,17 +97,24 @@ class design_option_column:
         plt.xlabel("Spanwise location [m]")
         plt.ylabel("Margin of Safety [-]")
         plt.grid(1)
+
+        #define the name of the file
         option = 3-(self.n_stringers==2)
         name = f"./Figures/mos_col_option_{option}.svg"
+
+        #save the plot
         plt.savefig(name, format="svg")
+
+        #clear the plot
         plt.cla()
 
 def main():
+    #define option 2
     option_2 = design_option_column((0.012675), 2, 10, None,8e-3,5.5e-3,4e-3)
-    # print(option_2.lengths)
+    #define option 3
     option_3 = design_option_column((0.001225), 4, 10, None,8e-3,5.5e-3,4e-3)
-    # print(option_3.lengths)
 
+    #generate the plots
     option_2.generate_plot()
     option_3.generate_plot()
 

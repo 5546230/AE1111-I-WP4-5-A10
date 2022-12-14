@@ -32,7 +32,7 @@ def get_ixx(y: float, t_f: float, t_r: float, t_s: float, n_stringer: int = 0, A
     #calculate the moment of inertia components
     I_xx_1 = 1/12*t_f*h**3 + A_1*(h/2-z_centroid)**2
     I_xx_2 = 1/12*t_s*H_2**3*math.sin(beta_1)**2+A_2*(h-H_2/2*np.sin(beta_1)-z_centroid)**2
-    I_xx_3 = 1/12*t_r*h_mid**3+A_3*(h_low+h_mid/2-z_centroid)**2
+    I_xx_3 = 1/12*t_r*h_mid**3 + A_3*(h_low+h_mid/2-z_centroid)**2
     I_xx_4 = 1/12*t_s*H_1**3*math.sin(beta_2)**2 + A_4*(z_centroid-H_1/2*np.sin(beta_2))**2
 
     nr_up = n_stringer//2 #number of upper part stringers
