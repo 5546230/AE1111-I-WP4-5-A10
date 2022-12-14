@@ -2,7 +2,7 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 
-def get_ixx(y: float, t: float, n_stringer: int = 0, A_stringer: float = 0.000625) -> float:
+def get_ixx(y: float, t_f: float, t_r: float, t_s: float, n_stringer: int = 0, A_stringer: float = 0.000625) -> float:
     '''returns the area moment of inertia at a y location along the span for a given thickness t, even number of stringers n_stringer with area A_stringer.'''
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
@@ -21,19 +21,19 @@ def get_ixx(y: float, t: float, n_stringer: int = 0, A_stringer: float = 0.00062
     beta_1 = math.atan(h_up/l) #top angle
     beta_2 = math.atan(h_2/l) #bottom angle
 
-    A_1 = h*t 
-    A_2 = H_2*t
-    A_3 = h_mid*t
-    A_4 = H_1*t
+    A_1 = h*t_f 
+    A_2 = H_2*t_s
+    A_3 = h_mid*t_r
+    A_4 = H_1*t_s
 
     #calculate the z coordinate of the wingbox
     z_centroid = ((h_low+h_mid/2)*A_3+h/2*A_1+H_1/2*np.sin(beta_2)*A_4+A_2*(h-H_2/2*np.sin(beta_1)))/(A_1+A_2+A_3+A_4)
     
     #calculate the moment of inertia components
-    I_xx_1 = 1/12*t*h**3 + A_1*(h/2-z_centroid)**2
-    I_xx_2 = 1/12*t*H_2**3*math.sin(beta_1)**2+A_2*(h-H_2/2*np.sin(beta_1)-z_centroid)**2
-    I_xx_3 = 1/12*t*h_mid**3+A_3*(h_low+h_mid/2-z_centroid)**2
-    I_xx_4 = 1/12*t*H_1**3*math.sin(beta_2)**2 + A_4*(z_centroid-H_1/2*np.sin(beta_2))**2
+    I_xx_1 = 1/12*t_f*h**3 + A_1*(h/2-z_centroid)**2
+    I_xx_2 = 1/12*t_s*H_2**3*math.sin(beta_1)**2+A_2*(h-H_2/2*np.sin(beta_1)-z_centroid)**2
+    I_xx_3 = 1/12*t_r*h_mid**3+A_3*(h_low+h_mid/2-z_centroid)**2
+    I_xx_4 = 1/12*t_s*H_1**3*math.sin(beta_2)**2 + A_4*(z_centroid-H_1/2*np.sin(beta_2))**2
 
     nr_up = n_stringer//2 #number of upper part stringers
     nr_down = n_stringer//2 #number of lower part stringers
