@@ -97,23 +97,25 @@ n_rib = 0
 #print(s_av*10**-6)
 #print(stress_crit(y1, y2, t)[0]*10**-6, "\n", K, "\n")
 
-
-while y2 < b/2:
-    if s_av < s_crit:
-        #print("Average stress ", int(s_av*10**-6), "\n")
-        #print("Critical sress", int(s_crit*10**-6), "\n")
-        y2 += dy
-        s_av = av_skin_stress(y1, y2, t, a_stringer)
-        s_crit = stress_crit(y1, y2, t)[0]
-    else:
-        print("\n", "Average stress ", int(s_av*10**-6),)
-        print("Critical sress", int(s_crit*10**-6),)
-        print("Rib at ", round(y2, 3), " m spanwise")
-        n_rib += 1
-        y1 = y2
-        y2 = y1 + dy
-        s_av = av_skin_stress(y1, y2, t, a_stringer)
-        s_crit = stress_crit(y1, y2, t)[0]
+for n in range(6,20):
+    while m < 1.5:
+        while t < 0.02:
+            while y2 < b/2:
+                if s_av < s_crit:
+                    #print("Average stress ", int(s_av*10**-6), "\n")
+                    #print("Critical sress", int(s_crit*10**-6), "\n")
+                    y2 += dy
+                    s_av = av_skin_stress(y1, y2, t, a_stringer)
+                    s_crit = stress_crit(y1, y2, t)[0]
+                else:
+                    print("\n", "Average stress ", int(s_av*10**-6),)
+                    print("Critical sress", int(s_crit*10**-6),)
+                    print("Rib at ", round(y2, 3), " m spanwise")
+                    n_rib += 1
+                    y1 = y2
+                    y2 = y1 + dy
+                    s_av = av_skin_stress(y1, y2, t, a_stringer)
+                    s_crit = stress_crit(y1, y2, t)[0]
 
 print("\n", "Number of ribs: ", n_rib)
 
