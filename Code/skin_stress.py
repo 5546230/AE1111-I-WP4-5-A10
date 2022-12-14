@@ -51,7 +51,7 @@ if __name__=="__main__":
     iterated = False
 
     # OUTPUT
-    output = np.array([["n", "m", "t [mm]", "mass [kg]"]])
+    output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "y last rib"]])
 
     #design options parameters (n_stringers, t, ...)
     designs = {
@@ -134,7 +134,7 @@ if __name__=="__main__":
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
                         mass = mass_remaining(y1)
-                        ind_out = np.array([[n, m, round(t*10**3, 3), mass]])
+                        ind_out = np.array([[n, m, round(t*10**3, 3), mass, n_rib, y1]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = 0 #m
