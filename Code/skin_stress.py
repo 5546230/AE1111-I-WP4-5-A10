@@ -31,8 +31,11 @@ def stress_crit(y1, y2, t, n_u):
 
 def mass_remaining(y_0):
     m_r = sp.integrate.quad(get_mass, y_0, 12)[0]
-    m_r = (1/9.80665)*m_r
     return m_r
+
+def mass_config_per_length(n, m, y1, t):
+    m_config = 2700*(n*m*a_stringer+1.101*get_c(0.5*(0+y1))*t)
+    return m_config
 
 if __name__=="__main__":
     #data
@@ -92,9 +95,9 @@ if __name__=="__main__":
 
     ########## Rib placement ##########
     # iterated thickness and stringer area carries through
-    dt = 0.001
+    dt = 0.0001
     dm = 0.1
-    dy = 0.1 #m
+    dy = 0.01 #m
 
     #t is set
     t = t0
@@ -112,7 +115,7 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1, y2, t, n_u)[0]
 
-    for n in range(4,6, 2):
+    for n in range(4,8, 2):
         while m < 0.2:
             while t < 0.05:
                 while y2 < b/4:
@@ -133,7 +136,7 @@ if __name__=="__main__":
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
-                        mass = mass_remaining(y1)
+                        mass =  mass_config_per_length(n, m, y1, t)*y1 + mass_remaining(y1)
                         ind_out = np.array([[n, m, round(t*10**3, 3), mass, n_rib, y1]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
