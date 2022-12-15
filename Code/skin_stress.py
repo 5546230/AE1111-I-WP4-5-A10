@@ -50,7 +50,7 @@ if __name__=="__main__":
 
     # INPUT
     n = 4
-    m0 = 0.1 # < 1 makes much more sense
+    m0 = 0.05 # < 1 makes much more sense
     t0 = 0.002 #m
     iterated = False
 
@@ -83,7 +83,7 @@ if __name__=="__main__":
     ########## Rib placement ##########
     # iterated thickness and stringer area carries through
     dt = 0.0001
-    dm = 0.1
+    dm = 0.02
     dy = 0.01 #m
 
     #t is set
