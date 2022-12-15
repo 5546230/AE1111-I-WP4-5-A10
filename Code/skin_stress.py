@@ -103,9 +103,9 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1, y2, t, n_u)[0]
 
-    for n in range(4,22, 2):
+    for n in range(4,20, 2):
         m = m0
-        while m < 0.2:
+        while m < 0.8:
             t = t0
             ######### thickness iteration ##########
             # iterates on thickness if needed
@@ -120,7 +120,7 @@ if __name__=="__main__":
                 s = skin_stress(0, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
 
             ##########
-            while t < 0.015:
+            while t < 0.012:
                 y1 = 0 #m
                 y2 = y1 + dy #m
                 while y2 < 3:
@@ -157,8 +157,18 @@ if __name__=="__main__":
     
     print(output)
 
-    with open('output.txt', 'w') as filehandle:
-        json.dump(output.tolist(), filehandle)
+    mass_stored = (5000, 1)
+    r, c = output.shape[0], output.shape[1]
+
+    for i in range(1, r):
+        mass_local = float(output[i, 3])
+        if mass_local < mass_stored[0]:
+            mass_stored = (mass_local, i)
+    
+    print(output[mass_stored[1]])
+
+    #with open('output.txt', 'w') as filehandle:
+    #    json.dump(output.tolist(), filehandle)
 
     #print("\n", "Number of ribs: ", n_rib)
 
