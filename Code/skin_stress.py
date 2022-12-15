@@ -79,20 +79,6 @@ if __name__=="__main__":
     #load case for maximum compression in upper skin panels
     load_max_compr = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
 
-    ######### thickness iteration ##########
-    # iterates on thickness if needed
-    sigma_yield = 271*10**6
-    s = skin_stress(0, t_f, t_r, t0, a_stringer, load_max_compr, n, m0)
-    #print(s)
-
-    while s > sigma_yield:
-        iterated = True
-        t0 += 0.0001
-        #print(get_ixx(0, t, n_stringers, m*a_stringer))
-        s = skin_stress(0, t_f, t_r, t0, a_stringer, load_max_compr, n, m0)
-
-    ##########
-
     ########## Rib placement ##########
     # iterated thickness and stringer area carries through
     dt = 0.0001
@@ -115,9 +101,26 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1, y2, t, n_u)[0]
 
-    for n in range(4,8, 2):
+    for n in range(4,22, 2):
+        m = m0
         while m < 0.2:
-            while t < 0.05:
+            t = t0
+            ######### thickness iteration ##########
+            # iterates on thickness if needed
+            sigma_yield = 271*10**6
+            s = skin_stress(0, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
+            #print(s)
+
+            while s > sigma_yield:
+                iterated = True
+                t += 0.0001
+                #print(get_ixx(0, t, n_stringers, m*a_stringer))
+                s = skin_stress(0, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
+
+            ##########
+            while t < 0.015:
+                y1 = 0 #m
+                y2 = y1 + dy #m
                 while y2 < b/4:
                     n_u = n//2
                     if s_av < s_crit:
@@ -137,7 +140,7 @@ if __name__=="__main__":
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
                         mass =  mass_config_per_length(n, m, y1, t)*y1 + mass_remaining(y1)
-                        ind_out = np.array([[n, m, round(t*10**3, 3), mass, n_rib, y1]])
+                        ind_out = np.array([[n, m, round(t*10**3, 3), round(mass, 5), int(n_rib), round(y1, 3)]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = 0 #m
@@ -145,8 +148,6 @@ if __name__=="__main__":
                         break
                 t += dt
             m += dm
-            t = t0
-        m = m0
     
     print(output)
 
