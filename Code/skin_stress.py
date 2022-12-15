@@ -1,3 +1,4 @@
+import json
 import numpy as np
 import scipy as sp
 from Moment_of_inertia import get_ixx
@@ -25,7 +26,7 @@ def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers,
 
 def stress_crit(y1, y2, t, n_u):
     slenderness = ((n_u+1)*(y2-y1))/(0.55*get_c(y1)) #a over b
-    K = 3.9617*np.e**(-0.046*slenderness) #for linearly varying moment
+    K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
     sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( ((n_u+1) / (0.55*get_c(y1)))**2 ) * K
     return sigma_crit, K
 
@@ -50,7 +51,7 @@ if __name__=="__main__":
     # INPUT
     n = 4
     m0 = 0.1 # < 1 makes much more sense
-    t0 = 0.004 #m
+    t0 = 0.002 #m
     iterated = False
 
     # OUTPUT
@@ -124,6 +125,7 @@ if __name__=="__main__":
                 y2 = y1 + dy #m
                 while y2 < 3:
                     n_u = n//2
+                    K = stress_crit(y1, y2, t, n_u)[1]
                     if s_av < s_crit:
                         #print("Average stress ", int(s_av*10**-6), "\n")
                         #print("Critical sress", int(s_crit*10**-6), "\n")
@@ -150,9 +152,13 @@ if __name__=="__main__":
                         ribs = []
                         break
                 t += dt
+                t = round(t*10**4, 0)/(10**4)
             m += dm
     
     print(output)
+
+    with open('output.txt', 'w') as filehandle:
+        json.dump(output.tolist(), filehandle)
 
     #print("\n", "Number of ribs: ", n_rib)
 
