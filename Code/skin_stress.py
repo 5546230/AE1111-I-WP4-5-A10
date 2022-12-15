@@ -33,8 +33,8 @@ def mass_remaining(y_0):
     m_r = sp.integrate.quad(get_mass, y_0, 12)[0]
     return m_r
 
-def mass_config_per_length(n, m, y1, t):
-    m_config = 2700*(n*m*a_stringer+1.101*get_c(0.5*(0+y1))*t)
+def mass_config_per_length(n, m, y1, y2, t):
+    m_config = 2700*(n*m*a_stringer+1.101*get_c(0.5*(y1+y2))*t) #assumes that m/l at the middle of the bay is the avg m/l
     return m_config
 
 if __name__=="__main__":
@@ -139,7 +139,7 @@ if __name__=="__main__":
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
-                        mass =  mass_config_per_length(n, m, y1, t)*y1 + mass_remaining(y1)
+                        mass =  mass_config_per_length(n, m, 0, y1, t)*(y1-0) + mass_remaining(y1)
                         ind_out = np.array([[n, m, round(t*10**3, 3), round(mass, 5), int(n_rib), round(y1, 3)]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
