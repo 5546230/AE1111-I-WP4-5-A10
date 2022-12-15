@@ -25,7 +25,7 @@ def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers,
 
 def stress_crit(y1, y2, t, n_u):
     slenderness = ((n_u+1)*(y2-y1))/(0.55*get_c(y1)) #a over b
-    K = 0.0364*(slenderness)**2 - 0.3815*(slenderness) + 4.2206 #for linearly varying moment
+    K = 3.9617*np.e**(-0.046*slenderness) #for linearly varying moment
     sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( ((n_u+1) / (0.55*get_c(y1)))**2 ) * K
     return sigma_crit, K
 
@@ -54,7 +54,7 @@ if __name__=="__main__":
     iterated = False
 
     # OUTPUT
-    output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "y last rib"]])
+    output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "rib 1", "rib 2"]])
 
     #design options parameters (n_stringers, t, ...)
     designs = {
@@ -97,6 +97,7 @@ if __name__=="__main__":
     #s_crit, K = stress_crit(y1, y2, t0)
 
     n_rib = 0
+    ribs = []
 
     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1, y2, t, n_u)[0]
@@ -121,7 +122,7 @@ if __name__=="__main__":
             while t < 0.015:
                 y1 = 0 #m
                 y2 = y1 + dy #m
-                while y2 < b/4:
+                while y2 < 3:
                     n_u = n//2
                     if s_av < s_crit:
                         #print("Average stress ", int(s_av*10**-6), "\n")
@@ -136,15 +137,17 @@ if __name__=="__main__":
                         n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
+                        ribs.append(y1)
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if n_rib == 2:
                         mass =  mass_config_per_length(n, m, 0, y1, t)*(y1-0) + mass_remaining(y1)
-                        ind_out = np.array([[n, m, round(t*10**3, 3), round(mass, 5), int(n_rib), round(y1, 3)]])
+                        ind_out = np.array([[n, m, round(t*10**3, 3), round(mass, 5), int(n_rib), round(ribs[0], 3), round(ribs[1], 3)]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = 0 #m
                         y2 = y1 + dy #m
+                        ribs = []
                         break
                 t += dt
             m += dm
@@ -161,5 +164,6 @@ if __name__=="__main__":
 
 
     #Work in progress
+    #K = 0.0364*(slenderness)**2 - 0.3815*(slenderness) + 4.2206 <- scrap
 
     ###########
