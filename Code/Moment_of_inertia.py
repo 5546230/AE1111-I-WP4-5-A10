@@ -75,16 +75,15 @@ def get_zcentroid(y: float, t: float) -> float:
 
     return z_centroid
 
-def get_J(y: float, t:float) -> float:
+def get_J(y: float, t_f: float, t_r: float, t_s: float) -> float:
     '''returns the polar moment of inertia for a given thickness t at a location y along the span'''
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
     # t = 1.5*10**-3 #thickness
    
     A_enclosed= 0.5*(0.114*c + 0.063*c)*0.55*c #enclosed area of the wingbox
-    perimeter= (0.114*c + 2*0.551*c + 0.063*c) #contour of the wingbox
 
-    J = 4*A_enclosed**2/(perimeter/t)
+    J = 4*A_enclosed**2/(0.063*c*t_r+0.114*c*t_f+(0.5505+0.55069)*c*t_s)
 
     return(J)
 
