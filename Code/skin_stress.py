@@ -6,6 +6,7 @@ from load_case import LoadCase
 from interpolation import *
 from Weight_diagram import get_mass
 from column_buckling import *
+from matplotlib import pyplot as plt
 
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
 #Commented lines are sometimes for debug
@@ -52,7 +53,7 @@ if __name__=="__main__":
 
     ################# INPUT ###################
     n = 4
-    m0 = 0.05 # < 1 makes much more sense
+    m0 = 0.07 # < 1 makes much more sense
     t0 = 0.002 #m
     iterated = False
 
@@ -93,7 +94,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 0 #m
+    y1_0 = 8.05 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -105,29 +106,31 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
 
-    for n in range(4,8, 2):
+    for n in range(4,12, 2):
         m = m0
-        while m < 0.4:
+        while m < 0.08:
             t = t0
             ######### thickness iteration ##########
             # iterates on thickness if needed
             sigma_yield = 271*10**6
-            s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
+            s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
             #print(s)
 
             while s > sigma_yield:
                 iterated = True
                 t += 0.0001
                 #print(get_ixx(0, t, n_stringers, m*a_stringer))
-                s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
+                s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
 
             ##########
             while t < 0.012:
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 3:
-                    n_u = n//2
+                while y2 < 12:
+                    n_u = 12//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
+                    s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
+                    s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if s_av < s_crit:
                         #print("Average stress ", int(s_av*10**-6), "\n")
                         #print("Critical sress", int(s_crit*10**-6), "\n")
@@ -137,17 +140,17 @@ if __name__=="__main__":
                     else: #Places a rib
                         #print("\n", "Average stress ", int(s_av*10**-6),)
                         #print("Critical sress", int(s_crit*10**-6),)
-                        #print("Rib at ", round(y2, 3), " m spanwise")
+                        #print("R ib at ", round(y2, 3), " m spanwise")
                         #n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
                         ribs.append(y1)
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
-                    if len(ribs)==2:
+                    if len(ribs)==1:
                         a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                        mass =  mass_config_per_length(n, m, 0, y1, t)*(y1-0) + mass_remaining(y1)
-                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 3), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, t_stringer*10**3, a*10**3]])
+                        mass =  mass_config_per_length(n, m, y1_0, ribs[0], t)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
+                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = y1_0 #m
@@ -156,16 +159,16 @@ if __name__=="__main__":
                         break
                 t += dt
                 ribs = []
-                t = round(t*10**4, 0)/(10**4)
             m += dm
     
     print(output[0,:])
     output = np.delete(output, 0, 0)
     output = output.astype(float)
     output = output[output[:, 3].argsort()]
-    output = output.astype(int)
+    #output = output.astype(int)
     print(output)
     print(output[0,:])
+    print(mass_config_per_length(output[0,0],output[0,1]*10**-2, y1_0, output[0,6]*10**-3, output[0,2]*10**-3)*(output[0,6]*10**-3-y1_0))
 
     #mass_stored = (5000, 1)
     #r, c = output.shape[0], output.shape[1]
@@ -173,14 +176,15 @@ if __name__=="__main__":
     #for i in range(1, r):
     #    mass_local = float(output[i, 3])
     #    if mass_local < mass_stored[0]:
-    #        mass_stored = (mass_local, i)
+    #        mass_stored = (mass_local, i) 
     
     #print(output[mass_stored[1]])
 
     with open('output.txt', 'w') as filehandle:
         json.dump(output.tolist(), filehandle)
     
-    #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], )
+    #ribs_list = []
+    #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.002, t_f, t_r)
 
     #print("\n", "Number of ribs: ", n_rib)
 
