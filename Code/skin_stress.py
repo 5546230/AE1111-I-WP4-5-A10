@@ -152,6 +152,7 @@ if __name__=="__main__":
                         ribs = []
                         break
                 t += dt
+                ribs = []
                 t = round(t*10**4, 0)/(10**4)
             m += dm
     
