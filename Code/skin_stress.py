@@ -7,6 +7,7 @@ from interpolation import *
 from Weight_diagram import get_mass
 
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
+#Commented lines are sometimes for debug
 
 #assumed distance from NA is the upper left corner of the wing box (conservative)
 def skin_stress(y, t_f, t_r, t, a_stringer, load_max_compr, n_stringers, m):
@@ -48,14 +49,14 @@ if __name__=="__main__":
     design_option = str(3)
     #design_option = str(input("Design option (1, 2 or 3):", ))
 
-    # INPUT
+    ################# INPUT ###################
     n = 4
     m0 = 0.05 # < 1 makes much more sense
     t0 = 0.002 #m
     iterated = False
 
     # OUTPUT
-    output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "rib 1", "rib 2"]])
+    output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "rib 1", "rib 2", "t_stringer", "a"]])
 
     #design options parameters (n_stringers, t, ...)
     designs = {
@@ -103,9 +104,9 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1, y2, t, n_u)[0]
 
-    for n in range(4,20, 2):
+    for n in range(4,6, 2):
         m = m0
-        while m < 0.8:
+        while m < 0.4:
             t = t0
             ######### thickness iteration ##########
             # iterates on thickness if needed
@@ -136,15 +137,16 @@ if __name__=="__main__":
                         #print("\n", "Average stress ", int(s_av*10**-6),)
                         #print("Critical sress", int(s_crit*10**-6),)
                         #print("Rib at ", round(y2, 3), " m spanwise")
-                        n_rib += 1
+                        #n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
                         ribs.append(y1)
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
-                    if n_rib == 2:
+                    if len(ribs)==2:
+                        a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
                         mass =  mass_config_per_length(n, m, 0, y1, t)*(y1-0) + mass_remaining(y1)
-                        ind_out = np.array([[n, m, round(t*10**3, 3), round(mass, 5), int(n_rib), round(ribs[0], 3), round(ribs[1], 3)]])
+                        ind_out = np.array([[n, m, round(t*10**3, 3), round(mass, 5), int(n_rib), round(ribs[0], 3), round(ribs[1], 3), t_stringer, a]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = 0 #m
@@ -156,20 +158,23 @@ if __name__=="__main__":
                 t = round(t*10**4, 0)/(10**4)
             m += dm
     
+    output = np.delete(output, 0, 0)
+    output = output.astype(float)
+    output = output[output[:, 3].argsort()]
     print(output)
 
-    mass_stored = (5000, 1)
-    r, c = output.shape[0], output.shape[1]
-
-    for i in range(1, r):
-        mass_local = float(output[i, 3])
-        if mass_local < mass_stored[0]:
-            mass_stored = (mass_local, i)
+    #mass_stored = (5000, 1)
+    #r, c = output.shape[0], output.shape[1]
+#
+    #for i in range(1, r):
+    #    mass_local = float(output[i, 3])
+    #    if mass_local < mass_stored[0]:
+    #        mass_stored = (mass_local, i)
     
-    print(output[mass_stored[1]])
+    #print(output[mass_stored[1]])
 
-    #with open('output.txt', 'w') as filehandle:
-    #    json.dump(output.tolist(), filehandle)
+    with open('output.txt', 'w') as filehandle:
+        json.dump(output.tolist(), filehandle)
 
     #print("\n", "Number of ribs: ", n_rib)
 
