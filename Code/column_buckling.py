@@ -18,7 +18,7 @@ class design_option_column:
         self.load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
 
         #check if lengths were specified
-        if lengths == None:
+        if type(lengths) == None:
             self.lengths = self.calc_lengths()
         else:
             self.lengths = np.array(lengths)
