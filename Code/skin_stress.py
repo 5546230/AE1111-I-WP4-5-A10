@@ -28,7 +28,10 @@ def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers,
     return ratio
 
 def stress_crit(y1, y2, t, n_u):
-    slenderness = ((n_u+1)*(y2-y1))/(0.55*get_c(y1)) #a over b
+    if n_u == 6:
+        slenderness = ((n_u+1)*(y2-y1))/(0.55*get_c(y1))
+    else:
+        slenderness = (0.5*(n_u+1)*(y2-y1))/(0.55*get_c(y1)) #a over b
     K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
     sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( ((n_u+1) / (0.55*get_c(y1)))**2 ) * K
     return sigma_crit, K
@@ -183,8 +186,8 @@ if __name__=="__main__":
     with open('output.txt', 'w') as filehandle:
         json.dump(output.tolist(), filehandle)
     
-    #ribs_list = []
-    #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.002, t_f, t_r)
+    #ribs_list = [0.64, 2.22, 2.61, 3.70, 4.00, 5.51, 5.34, 6.24, 7.04, 7.74, 8.05]
+    #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.007, t_f, t_r)
 
     #print("\n", "Number of ribs: ", n_rib)
 
