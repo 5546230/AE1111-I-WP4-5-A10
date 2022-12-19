@@ -35,9 +35,9 @@ def stress_crit(y1, y2, t, n_u):
         else: #it can only be less compared to the root case, so that's fine
             b = (2*0.55*get_c(y1))/(n_u+1)
     slenderness = ((y2-y1))/(b) #a over b
-    if slenderness < 0.5:
+    if slenderness < 0.55:
         K = 1000
-    elif (0.5 < slenderness) and (slenderness < 1):
+    elif (0.55 < slenderness) and (slenderness < 1):
         K = -83.333*(slenderness)**3+199.29*(slenderness)**2-160.67*(slenderness)+47.914
     elif slenderness > 1:
         K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
@@ -108,7 +108,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 1.6 #m
+    y1_0 = 0 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -120,7 +120,7 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
     print(a_stringer)
-    for n in range(6,10, 2):
+    for n in range(8,10, 2):
         m = m0
         while m <=1:
             ######### thickness iteration ##########
@@ -150,11 +150,11 @@ if __name__=="__main__":
 
             ##########
 
-            while t < 0.010:
+            while t < 0.02:
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
                 while y2 < 8:
-                    n_u = 12//2 #initial stringer arrangement should be kept
+                    n_u = n//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
                     slenderness = stress_crit(y1, y2, t, n_u)[2]
                     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
