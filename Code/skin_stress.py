@@ -186,8 +186,8 @@ if __name__=="__main__":
     with open('output.txt', 'w') as filehandle:
         json.dump(output.tolist(), filehandle)
     
-    #ribs_list = [0.64, 2.22, 2.61, 3.70, 4.00, 5.51, 5.34, 6.24, 7.04, 7.74, 8.05]
-    #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.007, t_f, t_r)
+    ribs_list = np.array([0.64, 2.22, 2.61, 3.70, 4.00, 5.51, 5.34, 6.24, 7.04, 7.74, 8.05])
+    option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.007, t_f, t_r)
 
     #print("\n", "Number of ribs: ", n_rib)
 
