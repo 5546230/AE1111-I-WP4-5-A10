@@ -80,6 +80,7 @@ def diagram(t: float, name: str) -> None:
 
 
 if __name__=="__main__":
+    #stuff
     # print(get_t())
     # diagram(4*1e-3, "twist1_2.svg")
     # diagram(1.5*1e-3, "twist2_2.svg")
