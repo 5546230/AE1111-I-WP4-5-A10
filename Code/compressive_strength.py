@@ -75,11 +75,11 @@ class design_option_compr:
         return stress
 
     def shear_front(self, y: float) -> float:
-        stress = shear_max(y, self.t_f, self.t_r, self.load)/1.2+shear_tor(y, self.t_f, self.load)
+        stress = shear_max(y, self.t_f, self.t_r, self.load)/1.5+shear_tor(y, self.t_f, self.load)
         return stress
 
     def shear_rear(self, y: float) -> float:
-        stress = shear_max(y, self.t_f, self.t_r, self.load)/1.2+shear_tor(y, self.t_r, self.load)
+        stress = shear_max(y, self.t_f, self.t_r, self.load)/1.5+shear_tor(y, self.t_r, self.load)
         return stress
     
     def mos_stringer(self, y: float) -> float:
@@ -205,7 +205,7 @@ class design_option_compr:
         plt.cla()
 
 def main():
-    option_2 = design_option_compr((0.045**2), 16, 10, 9.3e-3,5.5e-3,4e-3,2)
+    option_2 = design_option_compr((0.045**2), 16, 10, 5.5e-3,4e-3,9.3e-3,2)
     # option_3 = design_option_compr((0.1*0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,3)
     print(option_2.test())
     option_2.generate_plots()
