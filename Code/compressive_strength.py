@@ -14,7 +14,8 @@ class design_option_compr:
         t_f: float,
         t_r: float,
         t_s: float,
-        option_nr: int
+        option_nr: int,
+        load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
     ):
         self.sigma_yield = 271e6
         self.a_stringer = a_stringer
@@ -27,7 +28,7 @@ class design_option_compr:
 
         self.a = np.sqrt(a_stringer*a_t/2)
 
-        self.load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
+        self.load = load
         
         pass
 
@@ -131,7 +132,7 @@ class design_option_compr:
 
     def test(self) -> bool:
         '''tests whether the design option satisfies the compressive strength requirement'''
-        y_axis = np.linspace(0, 11.98,100)
+        y_axis = np.linspace(0, 1)
 
         for y in y_axis:
             if 1 > self.mos_stringer(y):
@@ -204,8 +205,11 @@ class design_option_compr:
         plt.cla()
 
 def main():
-    option_2 = design_option_compr((0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,2)
+    option_2 = design_option_compr((0.045**2), 16, 10, 9.3e-3,5.5e-3,4e-3,2)
+    # option_3 = design_option_compr((0.1*0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,3)
+    print(option_2.test())
     option_2.generate_plots()
+    # option_3.generate_plots()
 
 if __name__ == '__main__':
     main()
