@@ -30,14 +30,14 @@ def stress_crit(y1, y2, t, n_u):
     if y1_0 == 0:
         b = (0.55*get_c(y1))/(n_u+1)
     else:    
-        if n_u == 4:    #change n_u value according to the results of the root simulations               
+        if n_u == 5:    #change n_u value according to the results of the root simulations               
             b = (0.55*get_c(y1))/(n_u+1)
         else: #it can only be less compared to the root case, so that's fine
             b = (2*0.55*get_c(y1))/(n_u+1)
     slenderness = ((y2-y1))/(b) #a over b
-    if slenderness < 0.55:
+    if slenderness < 0.5:
         K = 1000
-    elif (0.55 < slenderness) and (slenderness < 1):
+    elif (0.5 < slenderness) and (slenderness < 1):
         K = -83.333*(slenderness)**3+199.29*(slenderness)**2-160.67*(slenderness)+47.914
     elif slenderness > 1:
         K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
@@ -121,7 +121,7 @@ if __name__=="__main__":
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
     for n in range(8,10, 2):
         m = m0
-        while m <=1:
+        while m <=0.5:
             ######### thickness iteration ##########
             # iterates on thickness if needed
             # sigma_yield = 271*10**6
@@ -133,7 +133,7 @@ if __name__=="__main__":
                 iterated =True
                 if n<=14:
                     n+=2
-                elif m<1:
+                elif m<0.5:
                     m+=dm
                     n-=2
                 else:
@@ -149,7 +149,7 @@ if __name__=="__main__":
 
             ##########
 
-            while t < 0.02:
+            while t < 0.015:
                 #check if amount of stringers can be reduced
                 while design_option_compr(m*a_stringer, n-2, 10, t_f, t_r, t, 1, load_max_compr).test():
                     if n-2>=0:
@@ -165,7 +165,7 @@ if __name__=="__main__":
 
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 8:
+                while y2 < 4:
                     n_u = n//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
                     slenderness = stress_crit(y1, y2, t, n_u)[2]
@@ -181,10 +181,12 @@ if __name__=="__main__":
                         ribs.append(y1)
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
-                    if len(ribs)==2:
+                    if y2 > 3.9:
+                        ribs.append(1)
+                    if len(ribs)==1:
                         a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                        mass =  mass_config_per_length(n, m, y1_0, ribs[1], t)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
-                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                        mass =  mass_config_per_length(n, m, y1_0, ribs[0], t)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
+                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = y1_0 #m
