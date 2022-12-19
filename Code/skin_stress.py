@@ -5,7 +5,6 @@ from Moment_of_inertia import get_ixx
 from load_case import LoadCase
 from interpolation import *
 from Weight_diagram import get_mass
-from column_buckling import *
 from matplotlib import pyplot as plt
 
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
@@ -28,12 +27,16 @@ def av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n_stringers,
     return ratio
 
 def stress_crit(y1, y2, t, n_u):
-    if n_u == 6:
-        slenderness = ((n_u+1)*(y2-y1))/(0.55*get_c(y1))
-    else:
-        slenderness = (0.5*(n_u+1)*(y2-y1))/(0.55*get_c(y1)) #a over b
+    if y1_0 == 0:
+        b = (0.55*get_c(y1))/(n_u+1)
+    else:    
+        if n_u == 4:    #change n_u value according to the results of the root simulations               
+            b = (0.55*get_c(y1))/(n_u+1)
+        else: #it can only be less compared to the root case, so that's fine
+            b = (2*0.55*get_c(y1))/(n_u+1)
+    slenderness = ((y2-y1))/(b) #a over b
     K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
-    sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( ((n_u+1) / (0.55*get_c(y1)))**2 ) * K
+    sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( (1/b)**2 ) * K
     return sigma_crit, K
 
 def mass_remaining(y_0):
@@ -45,6 +48,8 @@ def mass_config_per_length(n, m, y1, y2, t):
     return m_config
 
 if __name__=="__main__":
+    ###IMPORT HERE TO PREVENT CIRCULAR IMPORTATION###
+    from column_buckling import *
     #data
     b = 24 #m
     E = 68e9 #Pa
@@ -56,7 +61,7 @@ if __name__=="__main__":
 
     ################# INPUT ###################
     n = 4
-    m0 = 0.07 # < 1 makes much more sense
+    m0 = 0.1 # < 1 makes much more sense
     t0 = 0.002 #m
     iterated = False
 
@@ -97,7 +102,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 8.05 #m
+    y1_0 = 0 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -109,9 +114,9 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
 
-    for n in range(4,12, 2):
+    for n in range(6,16, 2):
         m = m0
-        while m < 0.08:
+        while m < 0.4:
             t = t0
             ######### thickness iteration ##########
             # iterates on thickness if needed
@@ -126,10 +131,10 @@ if __name__=="__main__":
                 s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
 
             ##########
-            while t < 0.012:
+            while t < 0.010:
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 12:
+                while y2 < 4:
                     n_u = 12//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
                     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
@@ -186,9 +191,9 @@ if __name__=="__main__":
     with open('output.txt', 'w') as filehandle:
         json.dump(output.tolist(), filehandle)
     
-    ribs_list = np.array([0.64, 2.22, 2.61, 3.70, 4.00, 5.51, 5.34, 6.24, 7.04, 7.74, 8.05])
-    option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.007, t_f, t_r)
-    option1.generate_plot()
+    #ribs_list = np.array([0.64, 2.22, 2.61, 3.70, 4.00, 5.51, 5.34, 6.24, 7.04, 7.74, 8.05])
+    #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.007, t_f, t_r)
+    #option1.generate_plot()
 
     #print("\n", "Number of ribs: ", n_rib)
 
