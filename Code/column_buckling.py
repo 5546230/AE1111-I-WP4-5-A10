@@ -121,13 +121,13 @@ class design_option_column:
 
 def main():
     #define option 2
-    option_2 = design_option_column((0.065**2), 14, 10, None,5e-3,5.5e-3,4e-3)
+    option_2 = design_option_column((0.045**2), 14, 10, None,5.7e-3,5.5e-3,4e-3)
     #define option 3
     option_3 = design_option_column((0.001225), 4, 10, None,5e-3,5.5e-3,4e-3)
 
     #generate the plots
     option_2.generate_plot()
-    option_3.generate_plot()
+    # option_3.generate_plot()
 
 if __name__=="__main__":
     main()
