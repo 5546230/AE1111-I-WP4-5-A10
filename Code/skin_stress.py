@@ -5,7 +5,6 @@ from Moment_of_inertia import get_ixx
 from load_case import LoadCase
 from interpolation import *
 from Weight_diagram import get_mass
-from column_buckling import *
 from matplotlib import pyplot as plt
 
 #background info is on page 671 in pdf "73 Bruhn analysis and design of flight vehicles.pdf"
@@ -49,6 +48,8 @@ def mass_config_per_length(n, m, y1, y2, t):
     return m_config
 
 if __name__=="__main__":
+    ###IMPORT HERE TO PREVENT CIRCULAR IMPORTATION###
+    from column_buckling import *
     #data
     b = 24 #m
     E = 68e9 #Pa

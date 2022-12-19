@@ -16,7 +16,7 @@ class design_option_compr:
         t_s: float,
         option_nr: int
     ):
-        self.sigma_yield = 275e6
+        self.sigma_yield = 271e6
         self.a_stringer = a_stringer
         self.n_stringer = n_stringer
         self.a_t = a_t
@@ -204,7 +204,7 @@ class design_option_compr:
         plt.cla()
 
 def main():
-    option_2 = design_option_compr((0.012675), 20, 10, 8e-3,5.5e-3,4e-3,2)
+    option_2 = design_option_compr((0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,2)
     option_2.generate_plots()
 
 if __name__ == '__main__':
