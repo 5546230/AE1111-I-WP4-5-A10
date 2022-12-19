@@ -35,9 +35,14 @@ def stress_crit(y1, y2, t, n_u):
         else: #it can only be less compared to the root case, so that's fine
             b = (2*0.55*get_c(y1))/(n_u+1)
     slenderness = ((y2-y1))/(b) #a over b
-    K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
+    if slenderness < 0.5:
+        K = 1000
+    elif (0.5 < slenderness) and (slenderness < 1):
+        K = -83.333*(slenderness)**3+199.29*(slenderness)**2-160.67*(slenderness)+47.914
+    elif slenderness > 1:
+        K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
     sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( (1/b)**2 ) * K
-    return sigma_crit, K
+    return sigma_crit, K, slenderness
 
 def mass_remaining(y_0):
     m_r = sp.integrate.quad(get_mass, y_0, 12)[0]
@@ -102,7 +107,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 0 #m
+    y1_0 = 1.6 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -114,9 +119,9 @@ if __name__=="__main__":
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
 
-    for n in range(6,16, 2):
+    for n in range(6,10, 2):
         m = m0
-        while m < 0.4:
+        while m < 0.12:
             t = t0
             ######### thickness iteration ##########
             # iterates on thickness if needed
@@ -134,22 +139,17 @@ if __name__=="__main__":
             while t < 0.010:
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 4:
+                while y2 < 8:
                     n_u = 12//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
+                    slenderness = stress_crit(y1, y2, t, n_u)[2]
                     s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                     s_crit = stress_crit(y1, y2, t, n_u)[0]
                     if s_av < s_crit:
-                        #print("Average stress ", int(s_av*10**-6), "\n")
-                        #print("Critical sress", int(s_crit*10**-6), "\n")
                         y2 += dy
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
                     else: #Places a rib
-                        #print("\n", "Average stress ", int(s_av*10**-6),)
-                        #print("Critical sress", int(s_crit*10**-6),)
-                        #print("R ib at ", round(y2, 3), " m spanwise")
-                        #n_rib += 1
                         y1 = y2
                         y2 = y1 + dy
                         ribs.append(y1)
@@ -178,16 +178,6 @@ if __name__=="__main__":
     print(output[0,:])
     print(mass_config_per_length(output[0,0],output[0,1]*10**-2, y1_0, output[0,6]*10**-3, output[0,2]*10**-3)*(output[0,6]*10**-3-y1_0))
 
-    #mass_stored = (5000, 1)
-    #r, c = output.shape[0], output.shape[1]
-#
-    #for i in range(1, r):
-    #    mass_local = float(output[i, 3])
-    #    if mass_local < mass_stored[0]:
-    #        mass_stored = (mass_local, i) 
-    
-    #print(output[mass_stored[1]])
-
     with open('output.txt', 'w') as filehandle:
         json.dump(output.tolist(), filehandle)
     
@@ -195,16 +185,6 @@ if __name__=="__main__":
     #option1 = design_option_column((output[0, 1]*10**-2)*a_stringer, output[0, 0], 10, ribs_list, 0.007, t_f, t_r)
     #option1.generate_plot()
 
-    #print("\n", "Number of ribs: ", n_rib)
-
-    #print("\n", "a = ", round(a, 3), " mm")
-
-    #print("\n", "thickness", round(t*10**3, 3), " mm")
-    #print("270 000 000 >", s)
-    #print("mass/unit length", 2700*(n_stringers*a_stringer+1.101*get_c(0)*t), "\n")
-
-
-    #Work in progress
     #K = 0.0364*(slenderness)**2 - 0.3815*(slenderness) + 4.2206 <- scrap
 
     ###########
