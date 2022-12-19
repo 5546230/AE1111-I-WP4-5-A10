@@ -55,6 +55,7 @@ def mass_config_per_length(n, m, y1, y2, t):
 if __name__=="__main__":
     ###IMPORT HERE TO PREVENT CIRCULAR IMPORTATION###
     from column_buckling import *
+    from compressive_strength import design_option_compr
     #data
     b = 24 #m
     E = 68e9 #Pa
@@ -77,7 +78,7 @@ if __name__=="__main__":
     designs = {
         "1":dict(t = 4, n_stringers = 0, a_stringer = 0),
         "2":dict(t = 1.5, n_stringers = 2, a_stringer = (65e-3)**2),
-        "3":dict(t = 2, n_stringers = n, a_stringer = (35e-3)**2)
+        "3":dict(t = 2, n_stringers = n, a_stringer = (45e-3)**2)
     }
 
     n_stringers = designs[design_option]["n_stringers"]
@@ -121,25 +122,36 @@ if __name__=="__main__":
 
     for n in range(6,10, 2):
         m = m0
-        while m < 0.12:
-            t = t0
+        while m <=1:
             ######### thickness iteration ##########
             # iterates on thickness if needed
-            sigma_yield = 271*10**6
-            s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
+            # sigma_yield = 271*10**6
+            # s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
             #print(s)
-
-            while s > sigma_yield:
-                iterated = True
-                t += 0.0001
-                #print(get_ixx(0, t, n_stringers, m*a_stringer))
-                s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
+            t=t0
+            current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
+            while not current_option.test():
+                if n<=14:
+                    n+=2
+                elif m<=0.9:
+                    m+=dm
+                    n-=2
+                else:
+                    t+=0.0001
+                    n-=2
+                    m-=dm
+                current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
+            # while s > sigma_yield:
+            #     iterated = True
+            #     t += 0.0001
+            #     #print(get_ixx(0, t, n_stringers, m*a_stringer))
+            #     s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
 
             ##########
             while t < 0.010:
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 8:
+                while y2 < 3:
                     n_u = 12//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
                     slenderness = stress_crit(y1, y2, t, n_u)[2]
