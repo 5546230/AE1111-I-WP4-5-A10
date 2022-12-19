@@ -67,8 +67,8 @@ if __name__=="__main__":
 
     ################# INPUT ###################
     n = 4
-    m0 = 0.1 # < 1 makes much more sense
-    t0 = 0.002 #m
+    m0 = 0.5 # < 1 makes much more sense
+    t0 = 0.004 #m
     iterated = False
 
     # OUTPUT
@@ -119,7 +119,7 @@ if __name__=="__main__":
 
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
-
+    print(a_stringer)
     for n in range(6,10, 2):
         m = m0
         while m <=1:
@@ -131,15 +131,16 @@ if __name__=="__main__":
             t=t0
             current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
             while not current_option.test():
+                iterated =True
                 if n<=14:
                     n+=2
-                elif m<=0.9:
+                elif m<1:
                     m+=dm
                     n-=2
                 else:
                     t+=0.0001
-                    n-=2
                     m-=dm
+                    n-=2
                 current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
             # while s > sigma_yield:
             #     iterated = True
@@ -148,10 +149,11 @@ if __name__=="__main__":
             #     s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
 
             ##########
+
             while t < 0.010:
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 3:
+                while y2 < 8:
                     n_u = 12//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
                     slenderness = stress_crit(y1, y2, t, n_u)[2]
