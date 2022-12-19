@@ -150,10 +150,10 @@ if __name__=="__main__":
                         ribs.append(y1)
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
-                    if len(ribs)==1:
+                    if len(ribs)==2:
                         a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                        mass =  mass_config_per_length(n, m, y1_0, ribs[0], t)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
-                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                        mass =  mass_config_per_length(n, m, y1_0, ribs[1], t)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
+                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = y1_0 #m
