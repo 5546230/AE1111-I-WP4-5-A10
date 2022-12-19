@@ -119,7 +119,6 @@ if __name__=="__main__":
 
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
-    print(a_stringer)
     for n in range(8,10, 2):
         m = m0
         while m <=1:
@@ -151,6 +150,19 @@ if __name__=="__main__":
             ##########
 
             while t < 0.02:
+                #check if amount of stringers can be reduced
+                while design_option_compr(m*a_stringer, n-2, 10, t_f, t_r, t, 1, load_max_compr).test():
+                    if n-2>=0:
+                        n-=2
+                    else:
+                        break
+                #check if m can be reduced
+                for multiplier in range(int(m/dm),0):
+                    if design_option_compr((m-multiplier*dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test():
+                        m-=dm*multiplier
+                        break
+
+
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
                 while y2 < 8:
