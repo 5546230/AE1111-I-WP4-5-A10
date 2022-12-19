@@ -21,7 +21,7 @@ class design_option_column:
         if lengths == None:
             self.lengths = self.calc_lengths()
         else:
-            self.lengths = lengths
+            self.lengths = np.array(lengths)
 
 
         #calculate the y coordinate of the ribs
