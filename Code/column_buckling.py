@@ -74,6 +74,15 @@ class design_option_column:
         #return the critical stress
         return crit_stress
     
+    def test(self) -> bool:
+        '''tests whether the design option satisfies the column buckling requirement'''
+        y_axis = np.linspace(0,12,100)
+
+        for y in y_axis:
+            if skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1) < 1:
+                return False
+        return True
+    
     def generate_plot(self):
         '''generates the plot of the margin of safety for column buckling'''
         #define the y-axis

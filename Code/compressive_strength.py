@@ -128,7 +128,24 @@ class design_option_compr:
         mos = self.sigma_yield/2/tau_max
         
         return mos
-    
+
+    def test(self) -> bool:
+        '''tests whether the design option satisfies the compressive strength requirement'''
+        y_axis = np.linspace(0, 11.98,100)
+
+        for y in y_axis:
+            if 1 > self.mos_stringer(y):
+                return False
+            if 1 > self.mos_skin(y):
+                return False
+            if 1 > self.mos_front(y):
+                return False
+            if 1 > self.mos_rear(y):
+                return False
+        
+        return True
+
+
     def generate_plots(self):
         y_axis = np.linspace(0,11.98,100)
 
@@ -181,10 +198,10 @@ class design_option_compr:
         ax[3].set_xlabel('Spanwise location [m]')
         ax[3].set_xlim(0,12)
 
-        plt.show()
-        # name = f"./Figures_mos_compr_option_{self.option_nr}.svg"
-        # plt.savefig(name, format="svg")
-        # plt.cla()
+        # plt.show()
+        name = f"./Figures_mos_compr_option_{self.option_nr}.svg"
+        plt.savefig(name, format="svg")
+        plt.cla()
 
 def main():
     option_2 = design_option_compr((0.012675), 2, 10, 8e-3,5.5e-3,4e-3,2)
