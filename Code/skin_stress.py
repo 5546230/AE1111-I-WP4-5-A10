@@ -30,7 +30,7 @@ def stress_crit(y1, y2, t, n_u):
     if y1_0 == 0:
         b = (0.55*get_c(y1))/(n_u+1)
     else:    
-        if n_u == 5:    #change n_u value according to the results of the root simulations               
+        if n_u == 3:    #change n_u value according to the results of the root simulations               
             b = (0.55*get_c(y1))/(n_u+1)
         else: #it can only be less compared to the root case, so that's fine
             b = (2*0.55*get_c(y1))/(n_u+1)
@@ -48,7 +48,7 @@ def mass_remaining(y_0):
     m_r = sp.integrate.quad(get_mass, y_0, 12)[0]
     return m_r
 
-def mass_config_per_length(n, m, y1, y2, t):
+def mass_config_per_length(n, m, y1, y2, t, a_stringer):
     m_config = 2700*(n*m*a_stringer+1.101*get_c(0.5*(y1+y2))*t) #assumes that m/l at the middle of the bay is the avg m/l
     return m_config
 
@@ -68,7 +68,7 @@ if __name__=="__main__":
     ################# INPUT ###################
     n = 4
     m0 = 0.5 # < 1 makes much more sense
-    t0 = 0.004 #m
+    t0 = 0.002 #m
     iterated = False
 
     # OUTPUT
@@ -108,7 +108,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 0 #m
+    y1_0 = 1.26 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -117,9 +117,14 @@ if __name__=="__main__":
     n_rib = 0
     ribs = []
 
+    counter = 0
+
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
-    for n in range(8,10, 2):
+    for n in range(4,8, 2):
+        counter += 1
+        if counter == 3:
+            break
         m = m0
         while m <=0.5:
             ######### thickness iteration ##########
@@ -131,14 +136,14 @@ if __name__=="__main__":
             current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
             while not current_option.test():
                 iterated =True
-                if n<=14:
+                if n<=4:
                     n+=2
                 elif m<0.5:
                     m+=dm
                     n-=2
                 else:
                     t+=0.0001
-                    m-=dm
+                #    m-=dm
                     n-=2
                 current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
             # while s > sigma_yield:
@@ -154,10 +159,15 @@ if __name__=="__main__":
             while t < 0.015:
                 #check if amount of stringers can be reduced
                 while design_option_compr(m*a_stringer, n-2, 10, t_f, t_r, t, 1, load_max_compr).test():
-                    if n-2>=0:
+                    if n-2>=4:
                         n-=2
                     else:
                         break
+                #check if m can be reduced
+                #for multiplier in range(int(m/dm),0):
+                #    if design_option_compr((m-multiplier*dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test():
+                #        m-=dm*multiplier
+                #        break
 
                 #speed up computation
                 if n == n_prev:
@@ -174,7 +184,7 @@ if __name__=="__main__":
                 print(n, m, t)  
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
-                while y2 < 4:
+                while y2 < 6:
                     n_u = n//2 #initial stringer arrangement should be kept
                     K = stress_crit(y1, y2, t, n_u)[1]
                     slenderness = stress_crit(y1, y2, t, n_u)[2]
@@ -190,12 +200,12 @@ if __name__=="__main__":
                         ribs.append(y1)
                         s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                         s_crit = stress_crit(y1, y2, t, n_u)[0]
-                    if y2 > 3.9:
-                        ribs.append(1)
-                    if len(ribs)==1:
-                        a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                        mass =  mass_config_per_length(n, m, y1_0, ribs[0], t)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
-                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                    if y2 > 5.9:
+                        ribs.append(5.9)
+                    if len(ribs)==2:
+                        #a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
+                        mass =  mass_config_per_length(n, m, y1_0, ribs[1], t, a_stringer)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
+                        ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                         output = np.concatenate((output,ind_out))
                         n_rib = 0
                         y1 = y1_0 #m

@@ -78,8 +78,16 @@ class design_option_column:
         '''tests whether the design option satisfies the column buckling requirement'''
         y_axis = np.linspace(0,12,100)
 
+        critical = self.critical_stress(y_axis)
+
+        actual = []
         for y in y_axis:
-            if skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1) < 1:
+            actual.append(skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1))
+        actual = np.array(actual)
+
+        for i in range(0,len(y_axis)):
+            factor = critical[i]/actual[i]
+            if factor < 1:
                 return False
         return True
     
