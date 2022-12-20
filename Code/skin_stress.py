@@ -30,7 +30,7 @@ def stress_crit(y1, y2, t, n_u):
     if y1_0 == 0:
         b = (0.55*get_c(y1))/(n_u+1)
     else:    
-        if n_u == 5:    #change n_u value according to the results of the root simulations               
+        if n_u == 3:    #change n_u value according to the results of the root simulations               
             b = (0.55*get_c(y1))/(n_u+1)
         else: #it can only be less compared to the root case, so that's fine
             b = (2*0.55*get_c(y1))/(n_u+1)
@@ -48,7 +48,7 @@ def mass_remaining(y_0):
     m_r = sp.integrate.quad(get_mass, y_0, 12)[0]
     return m_r
 
-def mass_config_per_length(n, m, y1, y2, t):
+def mass_config_per_length(n, m, y1, y2, t, a_stringer):
     m_config = 2700*(n*m*a_stringer+1.101*get_c(0.5*(y1+y2))*t) #assumes that m/l at the middle of the bay is the avg m/l
     return m_config
 
@@ -68,7 +68,7 @@ if __name__=="__main__":
     ################# INPUT ###################
     n = 4
     m0 = 0.5 # < 1 makes much more sense
-    t0 = 0.004 #m
+    t0 = 0.002 #m
     iterated = False
 
     # OUTPUT
@@ -108,7 +108,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 0 #m
+    y1_0 = 1.26 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -116,6 +116,8 @@ if __name__=="__main__":
 
     n_rib = 0
     ribs = []
+
+    counter = 0
 
     s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
     s_crit = stress_crit(y1_0, y2, t, n_u)[0]
