@@ -205,7 +205,7 @@ class design_option_compr:
         plt.cla()
 
 def main():
-    option_2 = design_option_compr((0.045**2), 16, 10, 5.5e-3,4e-3,9.3e-3,2)
+    option_2 = design_option_compr((0.045**2)*0.071, 4, 10, 5.5e-3,4e-3,13.7e-3,2)
     # option_3 = design_option_compr((0.1*0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,3)
     print(option_2.test())
     option_2.generate_plots()

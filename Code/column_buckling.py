@@ -79,7 +79,7 @@ class design_option_column:
         y_axis = np.linspace(0,12,100)
 
         for y in y_axis:
-            if skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1) < 1:
+            if self.critical_stress(y)/skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1) < 1:
                 return False
         return True
     
