@@ -108,7 +108,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 1.26 #m
+    y1_0 = 2.46 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -130,7 +130,7 @@ if __name__=="__main__":
     current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
     while not current_option.test():
         iterated =True
-        if n<=14:
+        if n<=2:
             n+=2
         elif m<0.5:
             m+=dm
@@ -160,11 +160,11 @@ if __name__=="__main__":
             m = m_prev
 
         #check if m can be reduced
-        while design_option_compr((m-dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test():
-            if m-2*dm>1e-3 and n>0:
-                m-=dm
-            else:
-                break
+        #while design_option_compr((m-dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test():
+        #    if m-2*dm>1e-3 and n>0:
+        #        m-=dm
+        #    else:
+        #        break
         n_prev = n
         m_prev = m	
         print(n, m, t)  
@@ -186,12 +186,12 @@ if __name__=="__main__":
                 ribs.append(y1)
                 s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                 s_crit = stress_crit(y1, y2, t, n_u)[0]
-            if y2 > 3.9:
-                ribs.append(1)
-            if len(ribs)==1:
+            if y2 > 8:
+                ribs.append(7.9)
+            if len(ribs)==2:
                 a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                mass =  mass_config_per_length(n, m, y1_0, ribs[0], t)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
-                ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                mass =  mass_config_per_length(n, m, y1_0, ribs[1], t)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
+                ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                 output = np.concatenate((output,ind_out))
                 n_rib = 0
                 y1 = y1_0 #m

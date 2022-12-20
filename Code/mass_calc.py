@@ -12,4 +12,5 @@ def mass_expected(y1, y2, n, m, t, a_stringer):
     return exp
 
 if __name__=="__main__":
-    print(mass_bay(0,0.38,6,0.5,12.4*10**-3,a_stringer))
+    print(mass_bay(1.26, 4.5, 6, 0.5, 12.4*10**-3, a_stringer))
+    print(mass_expected(1.26, 4.5, 6, 0.5, 12.4*10**-3, a_stringer))
