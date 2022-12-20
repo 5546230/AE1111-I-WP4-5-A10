@@ -190,7 +190,7 @@ if __name__=="__main__":
                 ribs.append(7.9)
             if len(ribs)==2:
                 a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                mass =  mass_config_per_length(n, m, y1_0, ribs[1], t)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
+                mass =  mass_config_per_length(n, m, y1_0, ribs[1], t, a_stringer)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
                 ind_out = np.array([[int(n), round(m*10**2, 3), round(t*10**3, 4), round(mass, 5), int(n_rib), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                 output = np.concatenate((output,ind_out))
                 n_rib = 0
@@ -208,7 +208,7 @@ if __name__=="__main__":
     #output = output.astype(int)
     print(output)
     print(output[0,:])
-    print(mass_config_per_length(output[0,0],output[0,1]*10**-2, y1_0, output[0,6]*10**-3, output[0,2]*10**-3)*(output[0,6]*10**-3-y1_0))
+    print(mass_config_per_length(output[0,0],output[0,1]*10**-2, y1_0, output[0,6]*10**-3, output[0,2]*10**-3, a_stringer)*(output[0,6]*10**-3-y1_0))
 
     with open('output.txt', 'w') as filehandle:
         json.dump(output.tolist(), filehandle)
