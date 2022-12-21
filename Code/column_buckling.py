@@ -13,7 +13,6 @@ class design_option_column:
         self.n_stringers = n_stringers
         self.a = np.sqrt(a_stringer*a_t/2)
         self.t_s = t_s
-        print(self.t_s(2), self.t_s(8))
         self.t_f = t_f
         self.t_r = t_r
         self.load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)

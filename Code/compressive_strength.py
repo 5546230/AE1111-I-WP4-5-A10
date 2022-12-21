@@ -13,7 +13,7 @@ class design_option_compr:
         a_t: float,
         t_f: float,
         t_r: float,
-        t_s: float,
+        t_s,
         option_nr: int,
         load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
     ):
@@ -29,22 +29,20 @@ class design_option_compr:
         self.a = np.sqrt(a_stringer*a_t/2)
 
         self.load = load
-        
-        pass
 
     def compr_stringer(self, y: float) -> float:
-        stress = skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringer, 1)
+        stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringer, 1)
         return stress
 
     def compr_skin(self, y: float) -> float:
-        stress = skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringer, 1)
+        stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringer, 1)
         return stress
 
     def compr_front(self, y: float) -> float:
         moment = self.load.z2_moment(y)
         c = 3.49 -3.49*(1-0.372)/12 *y
         coord = c * 0.114/2
-        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s, self.n_stringer, self.a_stringer)
+        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s(y), self.n_stringer, self.a_stringer)
         
         stress = moment*coord/ixx
 
@@ -54,14 +52,14 @@ class design_option_compr:
         moment = self.load.z2_moment(y)
         c = 3.49-3.49*(1-0.372)/12 *y
         coord = c * 0.063/2
-        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s, self.n_stringer, self.a_stringer)
+        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s(y), self.n_stringer, self.a_stringer)
 
         stress = moment*coord/ixx
         return stress
 
     def shear_stringer(self, y: float) -> float:
         torque_box = self.load.torque(y)
-        j= get_J(y, self.t_f, self.t_r, self.t_s)
+        j= get_J(y, self.t_f, self.t_r, self.t_s(y))
 
         stress = torque_box*self.a*self.a_t/j
 
@@ -71,7 +69,7 @@ class design_option_compr:
         c = 3.49-3.49*(1-0.372)/12 *y
         A_enclosed= 0.5*(0.114*c + 0.063*c)*0.55*c
         torque = self.load.torque(y)
-        stress = torque / (2*A_enclosed*self.t_s)
+        stress = torque / (2*A_enclosed*self.t_s(y))
         return stress
 
     def shear_front(self, y: float) -> float:
@@ -132,7 +130,7 @@ class design_option_compr:
 
     def test(self, y1: float) -> bool:
         '''tests whether the design option satisfies the compressive strength requirement'''
-        y_axis = np.linspace(y1, y1+1)
+        y_axis = np.linspace(y1, y1+1,10)
 
         for y in y_axis:
             if 1 > self.mos_stringer(y):
@@ -205,9 +203,10 @@ class design_option_compr:
         plt.cla()
 
 def main():
-    option_2 = design_option_compr((0.045**2)*0.071, 4, 10, 5.5e-3,4e-3,13.7e-3,2)
+    t = lambda x: 10e-3 if x<6 else 8e-3
+    option_2 = design_option_compr((0.045**2)*0.071, 4, 10, 5.5e-3,4e-3,t,2)
     # option_3 = design_option_compr((0.1*0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,3)
-    print(option_2.test())
+    print(option_2.test(0))
     option_2.generate_plots()
     # option_3.generate_plots()
 
