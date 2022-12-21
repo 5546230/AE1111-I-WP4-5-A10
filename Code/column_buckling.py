@@ -125,10 +125,13 @@ class design_option_column:
 def main():
     m = 0.08
     a_stringer = (35*10**-3)**2
-    n = 4
+    n = lambda x:4
     t_f = 5.5*10**-3 #m
     t_r = 4*10**-3 #m
-    t_s = lambda x: 1.5e-3 if x>9.64 else 1.7e-3 if x>9.13 else 2e-3 if x>8.59 else 2.8e-3 if x>7.43 else 4.4e-3 if x>6.14 else 6.5e-3 if x>4.71 else 7.9e-3 if x>3.68 else 9.2e-3 if x>2.86 else 9.9e-3 if x>2.36 else 10.9e-3 if x>1.78 else 12.3e-3 if x> 0.94 else 13.6e-3
+
+    t_lst = [13.6e-3, 12.3e-3, 10.9e-3, 9.9e-3, 9.2e-3, 7.9e-3, 6.5e-3, 4.4e-3, 2.8e-3, 2e-3, 1.7e-3, 1.5e-3]
+    y_lst = [0.94,1.78,2.36,2.86,3.68,4.71,6.14,7.43,8.59,9.13,9.64,12]
+    t_s = sp.interpolate.interp1d(y_lst, t_lst, kind="next", fill_value="extrapolate")
 
     ribs_list = np.array([0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13,12])
     lengths = np.zeros(len(ribs_list))
