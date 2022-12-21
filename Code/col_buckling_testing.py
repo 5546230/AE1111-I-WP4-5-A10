@@ -37,3 +37,4 @@ print(option1.a)
 #    option1 = design_option_column((m)*a_stringer, n, 10, lengths, t_s, t_f, t_r)
 
 #print(a)
+
