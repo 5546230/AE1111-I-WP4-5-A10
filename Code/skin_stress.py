@@ -128,7 +128,7 @@ if __name__=="__main__":
     #print(s)
     t=t0
     current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
-    while not current_option.test():
+    while not current_option.test(y1_0):
         iterated =True
         if n<=2:
             n+=2
@@ -165,7 +165,7 @@ if __name__=="__main__":
         #        m-=dm
         #    else:
         #        break
-        
+
         n_prev = n
         m_prev = m	
         print(n, m, t)  
