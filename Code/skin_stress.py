@@ -72,7 +72,7 @@ if __name__=="__main__":
     ################# INPUT ###################
     n = 0
     m0 = 0.08 # < 1 makes much more sense
-    t0 = 0.002 #m
+    t0 = 0.001 #m
     iterated = False
 
     # OUTPUT
@@ -112,7 +112,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 7.43 #m
+    y1_0 = 8.59 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -191,14 +191,14 @@ if __name__=="__main__":
                 ribs.append(y1)
                 s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
                 s_crit = stress_crit(y1, y2, t, n_u)[0]
-            if y2 > 9.9:
-                ribs.append(9.9)
-                y1 = 5.9
+            if y2 > 11.9:
+                ribs.append(11.9)
+                y1 = 11.9
                 y2 = y1+dy
-            if len(ribs)==2:
+            if len(ribs)==1:
                 a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                mass =  mass_config_per_length(n, m, y1_0, ribs[1], t, a_stringer)*(ribs[1]-y1_0) + mass_remaining(ribs[1])
-                ind_out = np.array([[int(n), m, round(t*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[1], int(n), m, t, a_stringer), round(ribs[0], 3)*10**3, round(ribs[1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                mass =  mass_config_per_length(n, m, y1_0, ribs[0], t, a_stringer)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
+                ind_out = np.array([[int(n), m, round(t*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[0], int(n), m, t, a_stringer), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                 output = np.concatenate((output,ind_out))
                 n_rib = 0
                 y1 = y1_0 #m
