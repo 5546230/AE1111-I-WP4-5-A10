@@ -7,12 +7,13 @@ from load_case import LoadCase
 
 class design_option_column:
     '''a class for column buckling of the stringers for a design option'''
-    def __init__(self, a_stringer: float, n_stringers: int, a_t: float, lengths: list, t_s: float, t_f: float, t_r: float):
+    def __init__(self, a_stringer: float, n_stringers: int, a_t: float, lengths: list, t_s, t_f: float, t_r: float):
         #define the variables
         self.a_stringer = a_stringer
         self.n_stringers = n_stringers
         self.a = np.sqrt(a_stringer*a_t/2)
         self.t_s = t_s
+        print(self.t_s(2), self.t_s(8))
         self.t_f = t_f
         self.t_r = t_r
         self.load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
@@ -51,7 +52,7 @@ class design_option_column:
 
         #find the lengths
         while y<12:
-            stress = skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1)
+            stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers, 1)
             if not y:
                 print(stress)
             length = np.sqrt(k * np.pi**2*e*self.a**2 / (6*stress))
@@ -82,7 +83,7 @@ class design_option_column:
 
         actual = []
         for y in y_axis:
-            if self.critical_stress(y)/skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1) < 1:
+            if self.critical_stress(y)/skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers, 1) < 1:
                 return False
         return True
     
@@ -97,7 +98,7 @@ class design_option_column:
         #calculate the actual stress at each y location
         actual = []
         for y in y_axis:
-            actual.append(skin_stress(y, self.t_f, self.t_r, self.t_s, self.a_stringer, self.load, self.n_stringers, 1))
+            actual.append(skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers, 1))
         actual = np.array(actual)
 
         #calculate the factor
@@ -123,10 +124,10 @@ class design_option_column:
         plt.cla()
 
 def main():
+    t = lambda x: 9e-3 if x<6 else 6e-3
     #define option 2
-    option_2 = design_option_column((0.045**2), 14, 10, None,5.7e-3,5.5e-3,4e-3)
+    option_2 = design_option_column((0.045**2), 14, 10, None,t,5.5e-3,4e-3)
     #define option 3
-    option_3 = design_option_column((0.001225), 4, 10, None,5e-3,5.5e-3,4e-3)
 
     #generate the plots
     option_2.generate_plot()
