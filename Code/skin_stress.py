@@ -108,7 +108,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 2.46 #m
+    y1_0 = 6.59 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
@@ -165,12 +165,13 @@ if __name__=="__main__":
         #        m-=dm
         #    else:
         #        break
+        
         n_prev = n
         m_prev = m	
         print(n, m, t)  
         y1 = y1_0 #m
         y2 = y1 + dy #m
-        while y2 < 4:
+        while y2 < 10:
             n_u = n//2 #initial stringer arrangement should be kept
             K = stress_crit(y1, y2, t, n_u)[1]
             slenderness = stress_crit(y1, y2, t, n_u)[2]
