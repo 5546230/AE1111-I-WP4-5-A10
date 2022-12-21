@@ -7,7 +7,7 @@ from load_case import LoadCase
 
 class design_option_column:
     '''a class for column buckling of the stringers for a design option'''
-    def __init__(self, a_stringer: float, n_stringers: int, a_t: float, lengths: list, t_s, t_f: float, t_r: float):
+    def __init__(self, a_stringer: float, n_stringers, a_t: float, lengths: list, t_s, t_f: float, t_r: float):
         #define the variables
         self.a_stringer = a_stringer
         self.n_stringers = n_stringers
@@ -51,7 +51,7 @@ class design_option_column:
 
         #find the lengths
         while y<12:
-            stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers, 1)
+            stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers(y), 1)
             if not y:
                 print(stress)
             length = np.sqrt(k * np.pi**2*e*self.a**2 / (6*stress))
@@ -82,7 +82,7 @@ class design_option_column:
 
         actual = []
         for y in y_axis:
-            if self.critical_stress(y)/skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers, 1) < 1:
+            if self.critical_stress(y)/skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers(y), 1) < 1:
                 return False
         return True
     
@@ -97,7 +97,7 @@ class design_option_column:
         #calculate the actual stress at each y location
         actual = []
         for y in y_axis:
-            actual.append(skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers, 1))
+            actual.append(skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringers(y), 1))
         actual = np.array(actual)
 
         #calculate the factor
@@ -123,9 +123,22 @@ class design_option_column:
         plt.cla()
 
 def main():
-    t = lambda x: 9e-3 if x<6 else 6e-3
-    #define option 2
-    option_2 = design_option_column((0.045**2), 14, 10, None,t,5.5e-3,4e-3)
+    m = 0.08
+    a_stringer = (35*10**-3)**2
+    n = 4
+    t_f = 5.5*10**-3 #m
+    t_r = 4*10**-3 #m
+    t_s = lambda x: 1.5e-3 if x>9.64 else 1.7e-3 if x>9.13 else 2e-3 if x>8.59 else 2.8e-3 if x>7.43 else 4.4e-3 if x>6.14 else 6.5e-3 if x>4.71 else 7.9e-3 if x>3.68 else 9.2e-3 if x>2.86 else 9.9e-3 if x>2.36 else 10.9e-3 if x>1.78 else 12.3e-3 if x> 0.94 else 13.6e-3
+
+    ribs_list = np.array([0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13,12])
+    lengths = np.zeros(len(ribs_list))
+    for i in range(0,len(ribs_list)):
+        if i == 0:
+            lengths[i] = ribs_list[i]
+        else:
+            lengths[i] = ribs_list[i]-ribs_list[i-1]
+    load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)    #define option 2
+    option_2 = design_option_column(m*a_stringer, n, 10, lengths,t_s,t_f,t_r)
     #define option 3
 
     #generate the plots
