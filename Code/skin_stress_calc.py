@@ -11,12 +11,14 @@ n = 4
 m = 0.08
 
 #INPUT
-y1 = 0.125
+n=2
+y1 = 10.16
 
 stress1 = skin_stress(y1, t_f, t_r, t_s, a_stringer, load_max_compr, n, m)
 print(stress1)
 
-y2 = 0.7
+n=4
+y2 = 7.8
 
 stress2 = skin_stress(y2, t_f, t_r, t_s, a_stringer, load_max_compr, n, m)
 print(stress2)
