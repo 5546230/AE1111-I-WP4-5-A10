@@ -113,14 +113,14 @@ class design_option_column:
         plt.grid(1)
 
         #define the name of the file
-        option = 3-(self.n_stringers==2)
-        name = f"./Figures/mos_col_option_{option}.svg"
-
+        # option = 3-(self.n_stringers==2)
+        # name = f"./Figures/mos_col_option_{option}.svg"
+        plt.show()
         #save the plot
-        plt.savefig(name, format="svg")
+        # plt.savefig(name, format="svg")
 
-        #clear the plot
-        plt.cla()
+        # #clear the plot
+        # plt.cla()
 
 def main():
     m = 0.08

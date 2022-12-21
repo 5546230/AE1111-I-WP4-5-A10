@@ -70,7 +70,9 @@ if __name__=="__main__":
     #design_option = str(input("Design option (1, 2 or 3):", ))
 
     ################# INPUT ###################
-    n = 0
+    n_0 = 0
+    n = lambda x: n_0
+    n_prev = n(0)
     m0 = 0.08 # < 1 makes much more sense
     t0 = 0.0015 #m
     iterated = False
@@ -86,7 +88,8 @@ if __name__=="__main__":
     }
 
     n_stringers = designs[design_option]["n_stringers"]
-    n_u = n_stringers//2
+    print(n(0))
+    n_u = int(n(0)/2)
     #t = designs[design_option]["t"]*1e-3 #m
     a_stringer = designs[design_option]["a_stringer"] #m^2
 
@@ -134,8 +137,9 @@ if __name__=="__main__":
     current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
     while not current_option.test(y1_0):
         iterated =True
-        if n<=0:
-            n+=2
+        if n(y1_0)<=0:
+            n= lambda x: n_prev + 2
+            n_prev+=2
         elif m<0.08:
             m+=dm
         else:
@@ -149,22 +153,20 @@ if __name__=="__main__":
     #     s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
 
     ##########
-    m_prev = m
-    n_prev = n
-
+    n_prev = n(0)
     t_prev = t(0)
 
     while t(0) < 0.013:
         #check if amount of stringers can be reduced
-        while design_option_compr(m*a_stringer, n-2, 10, t_f, t_r, t, 1, load_max_compr).test(y1_0):
-            if n-2>=0:
-                n-=2
+        n_two = lambda x: n(x)-2
+        while design_option_compr(m*a_stringer, n_two, 10, t_f, t_r, t, 1, load_max_compr).test(y1_0):
+            if n_two(0)>=0:
+                n = lambda x: n_prev - 2
+                n_prev -= 2
+                n_two = lambda x: n(x)-2
             else:
                 break
 
-        #speed up computation
-        if n == n_prev:
-            m = m_prev
 
         #check if m can be reduced
         #while design_option_compr((m-dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test(y1_0):
@@ -173,26 +175,24 @@ if __name__=="__main__":
         #    else:
         #        break
 
-        n_prev = n
-        m_prev = m	
-        print(n, m, t(0))  
+        print(n(0), m, t(0))  
         y1 = y1_0 #m
         y2 = y1 + dy #m
         while y2 < 12:
-            n_u = n//2 #initial stringer arrangement should be kept
+            n_u = n(y2)//2 #initial stringer arrangement should be kept
             K = stress_crit(y1, y2, t, n_u)[1]
             slenderness = stress_crit(y1, y2, t, n_u)[2]
-            s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n, m)
+            s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n(y1), m)
             s_crit = stress_crit(y1, y2, t, n_u)[0]
             if s_av < s_crit:
                 y2 += dy
-                s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n, m)
+                s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n(y1), m)
                 s_crit = stress_crit(y1, y2, t, n_u)[0]
             else: #Places a rib
                 y1 = y2
                 y2 = y1 + dy
                 ribs.append(y1)
-                s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n, m)
+                s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n(y1), m)
                 s_crit = stress_crit(y1, y2, t, n_u)[0]
             if y2 > 11.9:
                 ribs.append(11.9)
@@ -200,8 +200,8 @@ if __name__=="__main__":
                 y2 = y1+dy
             if len(ribs)==1:
                 a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                mass =  mass_config_per_length(n, m, y1_0, ribs[0], t(y1), a_stringer)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
-                ind_out = np.array([[int(n), m, round(t(y1)*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[0], int(n), m, t(y1), a_stringer), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                mass =  mass_config_per_length(n(y1), m, y1_0, ribs[0], t(y1), a_stringer)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
+                ind_out = np.array([[int(n(y1)), m, round(t(y1)*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[0], int(n(y1)), m, t(y1), a_stringer), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                 output = np.concatenate((output,ind_out))
                 n_rib = 0
                 y1 = y1_0 #m

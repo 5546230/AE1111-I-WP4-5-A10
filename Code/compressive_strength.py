@@ -31,18 +31,18 @@ class design_option_compr:
         self.load = load
 
     def compr_stringer(self, y: float) -> float:
-        stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringer, 1)
+        stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringer(y), 1)
         return stress
 
     def compr_skin(self, y: float) -> float:
-        stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringer, 1)
+        stress = skin_stress(y, self.t_f, self.t_r, self.t_s(y), self.a_stringer, self.load, self.n_stringer(y), 1)
         return stress
 
     def compr_front(self, y: float) -> float:
         moment = self.load.z2_moment(y)
         c = 3.49 -3.49*(1-0.372)/12 *y
         coord = c * 0.114/2
-        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s(y), self.n_stringer, self.a_stringer)
+        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s(y), self.n_stringer(y), self.a_stringer)
         
         stress = moment*coord/ixx
 
@@ -52,7 +52,7 @@ class design_option_compr:
         moment = self.load.z2_moment(y)
         c = 3.49-3.49*(1-0.372)/12 *y
         coord = c * 0.063/2
-        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s(y), self.n_stringer, self.a_stringer)
+        ixx = get_ixx(y, self.t_f, self.t_r, self.t_s(y), self.n_stringer(y), self.a_stringer)
 
         stress = moment*coord/ixx
         return stress

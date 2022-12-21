@@ -2,7 +2,7 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 
-def get_ixx(y: float, t_f: float, t_r: float, t_s: float, n_stringer: int = 0, A_stringer: float = 0.000625) -> float:
+def get_ixx(y: float, t_f: float, t_r: float, t_s: float, n_stringer, A_stringer: float = 0.000625) -> float:
     '''returns the area moment of inertia at a y location along the span for a given thickness t, even number of stringers n_stringer with area A_stringer.'''
     c_r = 3.49 #root chord[m]
     c = c_r-c_r*(1-0.372)/12*y #formula for chord
@@ -35,8 +35,8 @@ def get_ixx(y: float, t_f: float, t_r: float, t_s: float, n_stringer: int = 0, A
     I_xx_3 = 1/12*t_r*h_mid**3 + A_3*(h_low+h_mid/2-z_centroid)**2
     I_xx_4 = 1/12*t_s*H_1**3*math.sin(beta_2)**2 + A_4*(z_centroid-H_1/2*np.sin(beta_2))**2
 
-    nr_up = n_stringer//2 #number of upper part stringers
-    nr_down = n_stringer//2 #number of lower part stringers
+    nr_up = int(n_stringer//2) #number of upper part stringers
+    nr_down = int(n_stringer//2) #number of lower part stringers
 
     #case 1: t=2.4 no stringers
     #case 2: t=1 2 stringers (side=35mm)
