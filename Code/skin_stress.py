@@ -72,7 +72,7 @@ if __name__=="__main__":
     ################# INPUT ###################
     n = 0
     m0 = 0.08 # < 1 makes much more sense
-    t0 = 0.001 #m
+    t0 = 0.0015 #m
     iterated = False
 
     # OUTPUT
@@ -112,7 +112,7 @@ if __name__=="__main__":
     #n is set
     #m starts from 0.1
     m = m0
-    y1_0 = 8.59 #m
+    y1_0 = 11.02 #m
     y2 = y1_0 + dy #m
 
     #s_av = av_skin_stress(y1, y2, t0, a_stringer)
