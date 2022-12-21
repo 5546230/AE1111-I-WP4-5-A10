@@ -44,7 +44,7 @@ def stress_crit(y1, y2, t, n_u):
         K = -83.333*(slenderness)**3+199.29*(slenderness)**2-160.67*(slenderness)+47.914
     elif slenderness > 1:
         K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
-    sigma_crit = ( ((t**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( (1/b)**2 ) * K
+    sigma_crit = ( ((t(y1)**2)*E*(np.pi**2)) / (12*(1-nu**2)) ) * ( (1/b)**2 ) * K
     return sigma_crit, K, slenderness
 
 def mass_remaining(y_0):
@@ -108,7 +108,8 @@ if __name__=="__main__":
     dy = 0.01 #m
 
     #t is set
-    t = t0
+    t = lambda x: t0
+    t_prev = t0
     #n is set
     #m starts from 0.1
     m = m0
@@ -123,14 +124,13 @@ if __name__=="__main__":
 
     counter = 0
 
-    s_av = av_skin_stress(y1_0, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m0)
-    s_crit = stress_crit(y1_0, y2, t, n_u)[0]
+    # s_av = av_skin_stress(y1_0, y2, t_f, t_r, t(y), a_stringer, load_max_compr, n, m0)
+    # s_crit = stress_crit(y1_0, y2, t, n_u)[0]
     ######### thickness iteration ##########
     # iterates on thickness if needed
     # sigma_yield = 271*10**6
     # s = skin_stress(y1_0, t_f, t_r, t, a_stringer, load_max_compr, n, m)
     #print(s)
-    t=t0
     current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
     while not current_option.test(y1_0):
         iterated =True
@@ -139,7 +139,8 @@ if __name__=="__main__":
         elif m<0.08:
             m+=dm
         else:
-            t+=0.0001
+            t = lambda x: t_prev+dt
+            t_prev = t_prev+dt
         current_option = design_option_compr(m*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr)
     # while s > sigma_yield:
     #     iterated = True
@@ -151,7 +152,9 @@ if __name__=="__main__":
     m_prev = m
     n_prev = n
 
-    while t < 0.013:
+    t_prev = t(0)
+
+    while t(0) < 0.013:
         #check if amount of stringers can be reduced
         while design_option_compr(m*a_stringer, n-2, 10, t_f, t_r, t, 1, load_max_compr).test(y1_0):
             if n-2>=0:
@@ -172,24 +175,24 @@ if __name__=="__main__":
 
         n_prev = n
         m_prev = m	
-        print(n, m, t)  
+        print(n, m, t(0))  
         y1 = y1_0 #m
         y2 = y1 + dy #m
         while y2 < 12:
             n_u = n//2 #initial stringer arrangement should be kept
             K = stress_crit(y1, y2, t, n_u)[1]
             slenderness = stress_crit(y1, y2, t, n_u)[2]
-            s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
+            s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n, m)
             s_crit = stress_crit(y1, y2, t, n_u)[0]
             if s_av < s_crit:
                 y2 += dy
-                s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
+                s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n, m)
                 s_crit = stress_crit(y1, y2, t, n_u)[0]
             else: #Places a rib
                 y1 = y2
                 y2 = y1 + dy
                 ribs.append(y1)
-                s_av = av_skin_stress(y1, y2, t_f, t_r, t, a_stringer, load_max_compr, n, m)
+                s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n, m)
                 s_crit = stress_crit(y1, y2, t, n_u)[0]
             if y2 > 11.9:
                 ribs.append(11.9)
@@ -197,15 +200,17 @@ if __name__=="__main__":
                 y2 = y1+dy
             if len(ribs)==1:
                 a = ((m*a_stringer+t_stringer**2)/(2*t_stringer))
-                mass =  mass_config_per_length(n, m, y1_0, ribs[0], t, a_stringer)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
-                ind_out = np.array([[int(n), m, round(t*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[0], int(n), m, t, a_stringer), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                mass =  mass_config_per_length(n, m, y1_0, ribs[0], t(y1), a_stringer)*(ribs[0]-y1_0) + mass_remaining(ribs[0])
+                ind_out = np.array([[int(n), m, round(t(y1)*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[0], int(n), m, t(y1), a_stringer), round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
                 output = np.concatenate((output,ind_out))
                 n_rib = 0
                 y1 = y1_0 #m
                 y2 = y1 + dy #m
                 ribs = []
                 break
-        t += dt
+        
+        t = lambda x: t_prev + dt
+        t_prev += dt
         ribs = []
     
     print(output[0,:])
