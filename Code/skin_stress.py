@@ -78,7 +78,7 @@ if __name__=="__main__":
     n_list = [6, 4, 2, 0] #number of ribs to check
     n = lambda x: n_0
     n_prev = n(0)-2
-    m0 = 0.05 #starting m value
+    m0 = 0.05 #starting m value - set when finished with the first run at the root to the value obtained
     t0 = 0.002 #m - starting t value
 
     #iteration values
@@ -165,11 +165,12 @@ if __name__=="__main__":
 
 
             #check if m can be reduced
-            #while design_option_compr((m-dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test(y1_0):
-            #    if m-2*dm>0.005 and n(0)>0:
-            #        m-=dm
-            #    else:
-            #        break
+            if y1_0 == 0:
+                while design_option_compr((m-dm)*a_stringer, n, 10, t_f, t_r, t, 1, load_max_compr).test(y1_0):
+                    if m-2*dm>0.005 and n(0)>0:
+                        m-=dm
+                    else:
+                        break
 
             print(n(0), m, t(0))  
             y1 = y1_0 #m
