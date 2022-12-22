@@ -42,7 +42,7 @@ class design_option_skin:
         plt.show()
 
 if __name__=="__main__":
-    ### config data ###
+    ### config data - INPUT HERE ###
     ribs = np.array([0, 0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13, 9.64, 10.12, 10.58, 11.02, 11.43, 11.82])
     t_lst = np.array([13.6e-3, 12.3e-3, 10.9e-3, 9.9e-3, 9.2e-3, 7.9e-3, 6.5e-3, 4.4e-3, 2.8e-3, 2e-3, 1.7e-3, 1.5e-3])
     #list of the upper limits of the thickness values above. Make sure they have the same length

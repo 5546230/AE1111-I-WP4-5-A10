@@ -78,7 +78,7 @@ if __name__=="__main__":
     n_list = [6, 4, 2, 0] #number of ribs to check
     n = lambda x: n_0
     n_prev = n(0)-2
-    m0 = 0.082 #starting m value
+    m0 = 0.05 #starting m value
     t0 = 0.002 #m - starting t value
 
     #iteration values
@@ -100,6 +100,11 @@ if __name__=="__main__":
 
     n_rib = 0
     ribs = []
+
+    if y1_0 == 0:
+        m_lim = 0.5
+    else:
+        m_lim = m0
 
     # OUTPUT
     output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "rib 1 [mm]", "rib 2 [mm]", "t_stringer [mm]", "a [mm]"]])
@@ -136,7 +141,7 @@ if __name__=="__main__":
             #if n(0)<=n_0-2:
             #    n= lambda x: n_prev + 2
             #    n_prev+=2
-            if m<m0:
+            if m<m_lim:
                 m+=dm
             else:
                 t = lambda x: t_prev+dt
