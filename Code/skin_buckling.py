@@ -20,7 +20,7 @@ class design_option_skin:
         t_index = np.amin(indices)
 
         #critical and actual stresses in a bay
-        critical = stress_crit(y1, y2, self.t_lst[t_index], self.n_stringers(y1)//2, self.n_stringers(y1)//2, 1)[0]
+        critical = stress_crit(y1, y2, self.t_lst[t_index], self.n_stringers(y1)//2, self.n_stringers(0)//2, 1)[0]
         actual = av_skin_stress(y1, y2, self.t_f, self.t_r, self.t_lst[t_index], self.a_stringer, self.load, self.n_stringers(y1), self.m)
 
         print("\n", y1, y2, self.t_lst[t_index], "Critical: ", critical, "Actual: ", actual, "\n")
@@ -43,10 +43,10 @@ class design_option_skin:
 
 if __name__=="__main__":
     ### config data - INPUT HERE ###
-    ribs = np.array([0, 0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13, 9.64, 10.12, 10.58, 11.02, 11.43, 11.82])
-    t_lst = np.array([13.6e-3, 12.3e-3, 10.9e-3, 9.9e-3, 9.2e-3, 7.9e-3, 6.5e-3, 4.4e-3, 2.8e-3, 2e-3, 1.7e-3, 1.5e-3])
+    ribs = ribs = np.array([0, 0.37, 0.79])
+    t_lst = np.array([12.7e-3])
     #list of the upper limits of the thickness values above. Make sure they have the same length
-    y_lst = np.array([0.94,1.78,2.36,2.86,3.68,4.71,6.14,7.43,8.59,9.13,9.64,12])
+    y_lst = np.array([0.79])
 
     #other input data
     a_stringer = (35*10**-3)**2

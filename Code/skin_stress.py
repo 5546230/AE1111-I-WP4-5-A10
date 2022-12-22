@@ -40,9 +40,9 @@ def stress_crit(y1, y2, t, n_u, n_0, y1_0):
             b = 0.55*get_c(y1)
     slenderness = ((y2-y1))/(b) #a over b
     if slenderness < 0.5:
-        K = 1000
+        K = 12
     elif (0.5 < slenderness) and (slenderness < 1):
-        K = -83.333*(slenderness)**3+199.29*(slenderness)**2-160.67*(slenderness)+47.914
+        K = 1250*(slenderness)**4-3750*(slenderness)**3+4197.5*(slenderness)**2-2081.5*(slenderness)+391
     elif slenderness > 1:
         K = max(3.9617*np.e**(-0.046*slenderness), 3) #for linearly varying moment
     if __name__=="__main__":
@@ -74,8 +74,8 @@ if __name__=="__main__":
     #design_option = str(input("Design option (1, 2 or 3):", ))
 
     ################# INPUT ###################
-    n_0 = 6 #staring n value
-    n_list = [6, 4, 2, 0] #number of ribs to check
+    n_0 = 10 #staring n value
+    n_list = [10, 8, 6, 4, 2, 0] #number of ribs to check
     n = lambda x: n_0
     n_prev = n(0)-2
     m0 = 0.05 #starting m value - set when finished with the first run at the root to the value obtained
@@ -84,7 +84,8 @@ if __name__=="__main__":
     #iteration values
     dt = 0.0001
     dm = 0.001
-    dy = 0.01 #m
+    dy = 0.005 #m
+    tolerance = 1.1
 
     #t is set
     t = lambda x: t0
@@ -100,14 +101,17 @@ if __name__=="__main__":
 
     n_rib = 0
     ribs = []
+    ratio = []
 
     if y1_0 == 0:
-        m_lim = 0.5
+        m_lim = 0.4
     else:
         m_lim = m0
 
+    #########################################
+
     # OUTPUT
-    output = np.array([["n", "m", "t [mm]", "mass [kg]", "n_ribs", "rib 1 [mm]", "rib 2 [mm]", "t_stringer [mm]", "a [mm]"]])
+    output = np.array([["n", "m", "t [mm]", "mass [kg]", "m_bay [kg]", "rib 1 [mm]", "rib 2 [mm]", "rib 3 [mm]", "rib 4 [mm]", "r1"]])
 
     #design options parameters (n_stringers, t, ...)
     designs = {
@@ -176,44 +180,54 @@ if __name__=="__main__":
             y1 = y1_0 #m
             y2 = y1 + dy #m
             while y2 < span_lim:
-                n_u = n(y2)//2 #initial stringer arrangement should be kept
+                n_u = n(y1)//2 #initial stringer arrangement should be kept
                 K = stress_crit(y1, y2, t, n_u, n_0, y1_0)[1]
                 slenderness = stress_crit(y1, y2, t, n_u, n_0, y1_0)[2]
+                
                 s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n(y1), m)
                 s_crit = stress_crit(y1, y2, t, n_u, n_0, y1_0)[0]
-
-                if s_av*1.05 < s_crit:
+                
+                delta_K = stress_crit(y1, y2-dy, t, n_u, n_0, y1_0)[1] - stress_crit(y1, y2, t, n_u, n_0, y1_0)[1]
+                if (1.05*s_av) < s_crit:
                     y2 += dy
                     s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n(y1), m)
                     s_crit = stress_crit(y1, y2, t, n_u, n_0, y1_0)[0]
                 else: #Places a rib
+                    print("Rib placement", n(y1), m, t(y1), "ratio: ", s_av/s_crit, "DK: ", delta_K, "K: ", K, "Rib at: ", y2, "\n")
                     y1 = y2
                     y2 = y1 + dy
                     ribs.append(y1)
-                    s_av = av_skin_stress(y1, y2, t_f, t_r, t(y1), a_stringer, load_max_compr, n(y1), m)
-                    s_crit = stress_crit(y1, y2, t, n_u, n_0, y1_0)[0]
+                    ratio.append(s_av/s_crit)
                 if y2 > span_lim-0.1:
                     ribs.append(span_lim-0.1)
+                    ratio.append(s_av/s_crit)
                     y1 = span_lim-0.1
                     y2 = y1+dy
                 if len(ribs)==no_ribs_placed:
                     mass =  mass_config_per_length(n(y1), m, y1_0, ribs[no_ribs_placed-1], t(y1), a_stringer)*(ribs[no_ribs_placed-1]-y1_0) + mass_remaining(ribs[no_ribs_placed-1])
-                    ind_out = np.array([[int(n(y1)), m, round(t(y1)*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[no_ribs_placed-1], int(n(y1)), m, t(y1), a_stringer), round(ribs[0], 3)*10**3, round(ribs[no_ribs_placed-1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3]])
+                    ind_out = np.array([[int(n(y1)), m, round(t(y1)*10**3, 4), round(mass, 5), mass_bay(y1_0, ribs[no_ribs_placed-1], int(n(y1)), m, t(y1), a_stringer), round(ribs[0], 3)*10**3, round(ribs[no_ribs_placed-1], 3)*10**3, round(ribs[0], 3)*10**3, round(ribs[0], 3)*10**3, ratio[0]]])
                     output = np.concatenate((output,ind_out))
                     n_rib = 0
                     y1 = y1_0 #m
                     y2 = y1 + dy #m
                     ribs = []
+                    ratio = []
                     break
                 
             t = lambda x: t_prev + dt
             t_prev += dt
             ribs = []
+            ratio = []
         counter += 1
     
     print(output[0,:])
     output = np.delete(output, 0, 0)
     output = output.astype(float)
+    
+    output = np.delete(output, np.where(output[:, 9] > tolerance)[0], 0)
+    
+    output = np.delete(output, np.where( (output[:, 6] - output[:, 5]) < 100)[0], 0)
+    
     output = output[output[:, 3].argsort()]
     #output = output.astype(int)
     print(output)
@@ -230,12 +244,25 @@ if __name__=="__main__":
     #K = 0.0364*(slenderness)**2 - 0.3815*(slenderness) + 4.2206 <- scrap
 
     ### config data ### - log your simulation here
-    #n = 6
-    #m = 0.82
-    #ribs = np.array([0, 0.33, 0.66,])
-    #t_lst = np.array([13.7e-3, ])
+    #n = 6 if x< 
+    #m = 0.362
+    #ribs = np.array([0, 0.37, 0.79, 1.1, 1.43, 1.69, 1.96])
+    #t_lst = np.array([12.7e-3, 1.17e-3, 1.06e-e])
     #list of the upper limits of the thickness values above. Make sure they have the same length
-    #y_lst = np.array([0.66, ])
-    #masses = [123.5, ]
+    #y_lst = np.array([0.79, 1.43, 1.96])
+    #masses = [119, 74, 54]
 
+    #1
+    #[6.00000000e+00 3.62000000e-01 1.27000000e+01 7.72753170e+02 1.11934022e+02 3.70000000e+02 7.90000000e+02 3.70000000e+02 3.70000000e+02]
+    #2
+    #[6.00000000e+00 3.62000000e-01 1.17000000e+01 6.71014230e+02 8.12158147e+01 1.10000000e+03 1.43000000e+03 1.10000000e+03 1.10000000e+03]
+    #3
+    #[6.00000000e+00 3.62000000e-01 1.06000000e+01 5.94477120e+02 5.97300522e+01 1.69000000e+03 1.96000000e+03 1.69000000e+03 1.69000000e+03]
+    #4 
+    # 
+    #5 
+    # 
+    #6
+    #
+    #8     
     ###########
