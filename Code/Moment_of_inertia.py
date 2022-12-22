@@ -82,8 +82,8 @@ def get_J(y: float, t_f: float, t_r: float, t_s: float) -> float:
     # t = 1.5*10**-3 #thickness
    
     A_enclosed= 0.5*(0.114*c + 0.063*c)*0.55*c #enclosed area of the wingbox
-
-    J = 4*A_enclosed**2/(0.063*c/t_r+0.114*c/t_f+(0.5505+0.55069)*c/t_s)
+    J = 1 / ((1/4*A_enclosed**2)*(0.063*c/t_r+0.114*c/t_f+(0.5505+0.55069)*c/t_s))
+    # J = 4*A_enclosed**2/(0.063*c/t_r+0.114*c/t_f+(0.5505+0.55069)*c/t_s)
 
     return(J)
 

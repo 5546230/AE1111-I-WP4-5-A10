@@ -19,9 +19,8 @@ def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
     
     torque_tot = (torque)# - lift * 0.3*c) 
 
-    J = get_J(y, t)
+    J = get_J(y, t,t,t)
     G = 68e9*3/8
-
     return (-torque_tot/(G*J))
 
 def get_t() -> tuple:
@@ -57,8 +56,8 @@ def diagram(t: float, name: str) -> None:
     '''Get a twist diagram for a thickness t'''
     twist = [0]
     y_axis = np.linspace(0,11.98,101)
-    # load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
-    load = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
+    load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
+    # load = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
 
 
     #calculate twist for each y value
@@ -73,33 +72,35 @@ def diagram(t: float, name: str) -> None:
     plt.ylabel("Twist angle [deg]")
     plt.title(f"Twist angle for a thickness of {t*1e3:.1f} [mm] for n = {load.n:.2f}")
     plt.xlim(0,12)
-    plt.ylim(None, 0)
+    # plt.ylim(None, 0)
     plt.grid()
-    plt.savefig(name, format="svg", transparent = True)
-    plt.cla()
+    plt.show()
+    # plt.savefig(name, format="svg", transparent = True)
+    # plt.cla()
 
 
 if __name__=="__main__":
-    # print(get_t())
-    # diagram(4*1e-3, "twist1_2.svg")
-    # diagram(1.5*1e-3, "twist2_2.svg")
-    # diagram(2*1e-3, "twist3_2.svg")
-    _, t_lst, defl_lst = get_t()
+    print(get_t())
+    diagram(4e-3, "twist1_2.svg")
+    # diagram(1.5e-3, "twist2_2.svg")
+    # diagram(2e-3, "twist3_2.svg")
+    # _, t_lst, defl_lst = get_t()
 
-    iter_lst = np.arange(len(t_lst))
-    print(t_lst, defl_lst)
-    fig, axs = plt.subplots(2, sharex= True)    
-    fig.set_figwidth(7)
+    # iter_lst = np.arange(len(t_lst))
+    # print(t_lst, defl_lst)
+    # fig, axs = plt.subplots(2, sharex= True)    
+    # fig.set_figwidth(7)
 
-    axs[0].plot(iter_lst, np.array(t_lst)*1e3, marker = '.')
-    axs[0].set_ylabel("Thickness [mm]")
-    axs[0].grid(True)
+    # axs[0].plot(iter_lst, np.array(t_lst)*1e3, marker = '.')
+    # axs[0].set_ylabel("Thickness [mm]")
+    # axs[0].grid(True)
 
-    axs[1].plot(iter_lst, np.array(defl_lst)/np.pi*180, marker = '.')
-    axs[1].grid(True)
-    axs[1].set_ylabel("Twist angle [deg]")
-    axs[1].set_xlabel("Iteration")
-    axs[1].set_xbound(0, iter_lst[-1])
+    # axs[1].plot(iter_lst, np.array(defl_lst)/np.pi*180, marker = '.')
+    # axs[1].grid(True)
+    # axs[1].set_ylabel("Twist angle [deg]")
+    # axs[1].set_xlabel("Iteration")
+    # axs[1].set_xbound(0, iter_lst[-1])
 
-    axs[1].set_xticks(iter_lst)
-    plt.savefig("twist_iteration.svg", format="svg", transparent = True)
+    # axs[1].set_xticks(iter_lst)
+    # plt.savefig("twist_iteration.svg", format="svg", transparent = True)
+
