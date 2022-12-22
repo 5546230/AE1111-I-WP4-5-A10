@@ -78,7 +78,7 @@ if __name__=="__main__":
     n_list = [10, 8, 6, 4, 2, 0] #number of ribs to check
     n = lambda x: n_0
     n_prev = n(0)-2
-    m0 = 0.05 #starting m value - set when finished with the first run at the root to the value obtained
+    m0 = 0.204 #starting m value
     t0 = 0.002 #m - starting t value
 
     #iteration values
@@ -93,7 +93,7 @@ if __name__=="__main__":
     
     m = m0
     #start of iteration
-    y1_0 = 0 #m
+    y1_0 = 0.66 #m
     y2 = y1_0 + dy #m
 
     span_lim = 4 #runs until this spanwise location
