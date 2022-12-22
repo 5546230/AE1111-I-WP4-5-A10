@@ -130,7 +130,7 @@ class design_option_compr:
 
     def test(self, y1: float) -> bool:
         '''tests whether the design option satisfies the compressive strength requirement'''
-        y_axis = np.linspace(y1, y1+1,10)
+        y_axis = np.linspace(y1, y1+0.5,10)
 
         for y in y_axis:
             if 1 > self.mos_stringer(y):
