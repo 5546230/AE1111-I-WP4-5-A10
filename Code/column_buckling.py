@@ -133,7 +133,7 @@ def main():
     y_lst = [0.94,1.78,2.36,2.86,3.68,4.71,6.14,7.43,8.59,9.13,9.64,12]
     t_s = sp.interpolate.interp1d(y_lst, t_lst, kind="next", fill_value="extrapolate")
 
-    ribs_list = np.array([0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13,12])
+    ribs_list = np.array([0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13, 9.64, 10.12, 11])
     lengths = np.zeros(len(ribs_list))
     for i in range(0,len(ribs_list)):
         if i == 0:
