@@ -40,7 +40,7 @@ class design_option_skin:
             mos = self.skin_buckling_mos(y1, y2)
             span_lst.append(y2)
             mos_lst.append(mos)
-        name = f"./Figures/Option"+str(option)+"_MoS_SB.svg"
+        name = f"./Figures/Option{option}_MoS_SB.svg"
         plt.plot(span_lst, mos_lst)
         plt.ylim([0, 5])
         plt.xlim(0,12)

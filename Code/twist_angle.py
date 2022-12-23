@@ -6,7 +6,7 @@ from scipy import interpolate
 from interpolation import get_mspan
 from matplotlib import pyplot as plt
 
-def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
+def get_twist(y: float, load: LoadCase, t_f: float, t_r: float, t_s: float, alpha: float) -> float:
     '''the relation between the twist angle, polar moment of inertia and the torque'''
 
     #get the pitching moment
@@ -19,7 +19,7 @@ def get_twist(y: float, load: LoadCase, t: float, alpha: float) -> float:
     
     torque_tot = (torque)# - lift * 0.3*c) 
 
-    J = get_J(y, t,t,t)
+    J = get_J(y, t_f,t_r,t_s(y))
     G = 68e9*3/8
     return (-torque_tot/(G*J))
 
@@ -52,36 +52,36 @@ def get_t() -> tuple:
         #update the thickness for next iteration
         t=t*twist[-1]/(9.5/180*np.pi)
 
-def diagram(t: float, name: str) -> None:        
+def diagram(t_s, t_f: float, t_r: float, name: str) -> None:        
     '''Get a twist diagram for a thickness t'''
     twist = [0]
     y_axis = np.linspace(0,11.98,101)
-    load = LoadCase(2.62, 16575.6*9.80665, 250.79, 12500)
+    load = LoadCase(2.62*1.5, 16575.6*9.80665, 250.79, 12500)
     # load = LoadCase(-1.5, 16575.6*9.80665, 156.42, 12500)
 
 
     #calculate twist for each y value
     for i in np.arange(100):
         #get the twist value and include the extra angle of attack due to twist
-        twist_val, _ = sp.integrate.quad(get_twist, 0, y_axis[i], args=(load,t, twist[i-1]))
+        twist_val, _ = sp.integrate.quad(get_twist, 0, y_axis[i], args=(load,t_f, t_r, t_s, twist[i-1]))
         twist.append(twist_val)
-
+    print(np.rad2deg(twist[-1]))
     #plot the graph    
-    plt.plot(y_axis,np.array(twist)/np.pi*180)
+    plt.plot(y_axis,np.rad2deg(np.array(twist)))
     plt.xlabel("Spanwise location [m]")
     plt.ylabel("Twist angle [deg]")
-    plt.title(f"Twist angle for a thickness of {t*1e3:.1f} [mm] for n = {load.n:.2f}")
+    # plt.title(f"Twist angle for a thickness of {t*1e3:.1f} [mm] for n = {load.n:.2f}")
     plt.xlim(0,12)
-    # plt.ylim(None, 0)
+    plt.ylim(0)
     plt.grid()
-    plt.show()
-    # plt.savefig(name, format="svg", transparent = True)
-    # plt.cla()
+    # plt.show()
+    plt.savefig(name, format="svg", transparent = True)
+    plt.cla()
 
 
 if __name__=="__main__":
-    print(get_t())
-    diagram(4e-3, "twist1_2.svg")
+    # print(get_t())
+    # diagram(4e-3, "twist1_2.svg")
     # diagram(1.5e-3, "twist2_2.svg")
     # diagram(2e-3, "twist3_2.svg")
     # _, t_lst, defl_lst = get_t()
@@ -103,4 +103,9 @@ if __name__=="__main__":
 
     # axs[1].set_xticks(iter_lst)
     # plt.savefig("twist_iteration.svg", format="svg", transparent = True)
-
+    t_f = 5.5e-3
+    t_r = 4e-3
+    t_lst = np.array([12.7e-3, 11.8e-3, 10.6e-3, 9.7e-3, 8.8e-3, 7.7e-3, 7.0e-3, 6.6e-3, 4.7e-3, 4.4e-3, 5.2e-3])
+    y_lst = np.array([0.77, 1.445, 1.97, 2.455, 3.13, 3.745, 4.515, 6.87, 8.145, 8.885, 12])
+    t_s = sp.interpolate.interp1d(y_lst, t_lst, kind="next", fill_value="extrapolate")
+    diagram(t_s, t_f, t_r, "./Figures/twist_design.svg")
