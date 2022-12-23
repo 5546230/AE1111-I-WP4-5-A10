@@ -130,7 +130,7 @@ class design_option_compr:
 
     def test(self, y1: float) -> bool:
         '''tests whether the design option satisfies the compressive strength requirement'''
-        y_axis = np.linspace(y1, y1+1,10)
+        y_axis = np.linspace(y1, y1+0.5,10)
 
         for y in y_axis:
             if 1 > self.mos_stringer(y):
@@ -204,7 +204,8 @@ class design_option_compr:
 
 def main():
     t = lambda x: 10e-3 if x<6 else 8e-3
-    option_2 = design_option_compr((0.045**2)*0.071, 4, 10, 5.5e-3,4e-3,t,2)
+    n = lambda x: 4
+    option_2 = design_option_compr((0.045**2)*0.071, n, 10, 5.5e-3,4e-3,t,2)
     # option_3 = design_option_compr((0.1*0.065**2), 14, 10, 5e-3,5.5e-3,4e-3,3)
     print(option_2.test(0))
     option_2.generate_plots()

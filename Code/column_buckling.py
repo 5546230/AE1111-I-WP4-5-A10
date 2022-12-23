@@ -65,7 +65,8 @@ class design_option_column:
     def crit_stress(self) -> float:
         '''calculates the critical stress'''
         #define the variables
-        k = 4
+        k = 4 #both ends clamped - very much non-conservative
+        #k = 1 #both ends pinned - cpnservative
         e = 68e9
 
         #calculate the critical stress
@@ -125,19 +126,18 @@ class design_option_column:
 def main():
     m = 0.08
     a_stringer = (35*10**-3)**2
-    n = lambda x: 6 if x<2.86 else 4 if x<4.2 else 2 if x<4.71 else 0
     t_f = 5.5*10**-3 #m
     t_r = 4*10**-3 #m
 
-    t_lst = [13.4e-3, 12.7e-3, 11.1e-3, 9.6e-3, 8.2e-3, 6.9e-3, 6.0e-3, 5.0e-3, 4.0e-3, 3.2e-3, 2.6e-3, 2.3e-3, 2.0e-3, 2.0e-3, 2.0e-3]
+    t_lst = [9.8e-3, 10.7e-3, 9.1e-3, 8.2e-3, 7.1e-3, 5.0e-3, 3.2e-3, 2.1e-3, 1.3e-3]
     #[13.6e-3, 12.7e-3, 7.0e-3, 3.2e-3, 2.1e-3, 2.0e-3, 2.0e-3]
     #[13.6e-3, 12.3e-3, 10.9e-3, 9.9e-3, 9.2e-3, 7.9e-3, 6.5e-3, 4.4e-3, 2.8e-3, 2e-3, 1.7e-3, 1.5e-3]
-    y_lst = [0.66, 1.59, 2.48, 3.32, 4.11, 4.86, 5.59, 6.28, 6.93, 7.54, 8.13, 9.22, 10.20, 11.09, 12] 
+    y_lst = [1.10, 2.06, 3.28, 4.71, 6.14, 7.43, 8.59, 9.64, 12] 
     #[0.71, 4.25, 7.11, 8.30, 9.37, 10.34, 12]
     #[0.94,1.78,2.36,2.86,3.68,4.71,6.14,7.43,8.59,9.13,9.64,12]
     t_s = sp.interpolate.interp1d(y_lst, t_lst, kind="next", fill_value="extrapolate")
 
-    ribs_list = np.array([0.33, 0.66, 1.13, 1.59, 2.04, 2.48, 2.91, 3.32, 3.72, 4.11, 4.49, 4.86, 5.23, 5.59, 5.94, 6.28, 6.61, 6.93, 7.24, 7.54, 7.84, 8.13, 8.69, 9.22, 9.72, 10.20, 10.66, 11.09, 11.50, 11.90])
+    ribs_list = np.array([0.47, 0.94, 1.35, 1.78, 2.06, 2.36, 2.61, 2.86, 3.28, 3.68, 4.2, 4.71, 5.44, 6.14, 6.8, 7.43, 8.03, 8.59, 9.13, 9.64, 10.12, 11])
     lengths = np.zeros(len(ribs_list))
     for i in range(0,len(ribs_list)):
         if i == 0:
