@@ -125,7 +125,6 @@ class design_option_column:
         plt.cla()
 
 def main():
-    m = 0.08
     a_stringer = (35*10**-3)**2
     t_f = 5.5*10**-3 #m
     t_r = 4*10**-3 #m
