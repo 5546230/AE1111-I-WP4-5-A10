@@ -92,10 +92,10 @@ if __name__=="__main__":
     
     m = m0
     #start of iteration
-    y1_0 = 0.66 #m
+    y1_0 = 11.09 #m
     y2 = y1_0 + dy #m
 
-    span_lim = 4 #runs until this spanwise location
+    span_lim = 12 #runs until this spanwise location
     no_ribs_placed = 2 #places this many ribs (max 4). ALSO CHANGE "ind_out" ARRAY ACCORDINGLY
 
     n_rib = 0
